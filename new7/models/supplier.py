@@ -46,7 +46,7 @@ class Supplier(BaseModel):
     )
     account = models.CharField(
         u'账户',
-        max_length=20,
+        max_length=200,
         null=True,
         blank=True,
         help_text=u'账户',

@@ -9,12 +9,12 @@ class Depot(BaseModel):
     仓库
     '''
     DEPOT_TYPE = (
-        ('main', u'在途'),
-        ('branch', u'总库'),
+        ('main', u'总库'),
+        ('branch', u'分库'),
     )
     name = models.CharField(
         u'仓库名称',
-        max_length=20,
+        max_length=60,
         null=True,
         unique=True,
         help_text=u'仓库名称',
@@ -38,6 +38,6 @@ class Depot(BaseModel):
         return self.name
     
     class Meta:
-        verbose_name = u'供应商'
+        verbose_name = u'仓库'
         verbose_name_plural = verbose_name
 

@@ -9,11 +9,11 @@ class Client(BaseModel):
     客户
     '''
     name = models.CharField(
-        u'单位名称',
+        u'客户名称',
         max_length=20,
         null=True,
         unique=True,
-        help_text=u'单位名称',
+        help_text=u'客户名称',
     )
     tontact_phone = models.CharField(
         u'联系电话',

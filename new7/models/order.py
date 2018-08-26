@@ -45,9 +45,10 @@ class Order(BaseModel):
         help_text=u'交货日期',
     )
 
-    depot = models.CharField(
-        u'仓库',
-        max_length=200,
+    depot = models.ForeignKey(
+        'new7.Depot',
+        verbose_name=u'仓库',
+        on_delete=models.PROTECT,
         null=True,
         blank=True,
         help_text=u'仓库',
@@ -77,21 +78,21 @@ class Order(BaseModel):
     )
     unit = models.CharField(
         u'单位',
-        max_length=20,
+        max_length=200,
         null=True,
         blank=True,
         help_text=u'单位',
     )
     price = models.CharField(
         u'单价',
-        max_length=20,
+        max_length=200,
         null=True,
         blank=True,
         help_text=u'单价',
     )
     total_price = models.CharField(
         u'金额',
-        max_length=20,
+        max_length=200,
         null=True,
         blank=True,
         help_text=u'金额',
