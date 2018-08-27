@@ -14,7 +14,14 @@ class Order(BaseModel):
         max_length=100,
         null=True,
         unique=True,
-        help_text=u'单位名称',
+        help_text=u'票号',
+    )
+    order_unique = models.CharField(
+        u'流水号',
+        max_length=200,
+        null=True,
+        unique=True,
+        help_text=u'流水号',
     )
     supplier = models.ForeignKey(
         'new7.Supplier',
@@ -43,6 +50,38 @@ class Order(BaseModel):
         blank=True,
         null=True,
         help_text=u'交货日期',
+    )
+
+    deliver_type = models.CharField(
+        u'送货方式',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'送货方式',
+    )
+
+    deliver_money = models.CharField(
+        u'运费',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'运费',
+    )
+
+    deliver_address = models.CharField(
+        u'收货地址',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'收货地址',
+    )
+
+    status = models.CharField(
+        u'订单状态',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'订单状态',
     )
 
     depot = models.ForeignKey(
@@ -97,6 +136,27 @@ class Order(BaseModel):
         blank=True,
         help_text=u'金额',
     )
+    pay_type = models.CharField(
+        u'支付方式',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'支付方式',
+    )
+    pay_from = models.CharField(
+        u'支付来源',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'支付来源',
+    )
+    is_pay = models.CharField(
+        u'是否支付',
+        max_length=10,
+        null=True,
+        blank=True,
+        help_text=u'是否支付',
+    )
     production_date = models.DateTimeField(
         u'生产日期',
         blank=True,
@@ -115,6 +175,36 @@ class Order(BaseModel):
         null=True,
         blank=True,
         help_text=u'备注',
+    )
+
+    is_closed = models.BooleanField(
+        u'订单是否完成',
+        default=False,
+        blank=True,
+        help_text=u'订单是否完成',
+    )
+
+    flag = models.CharField(
+        u'订单有效标识',
+        max_length=20,
+        null=True,
+        blank=True,
+        help_text=u'订单有效标识',
+    )
+
+    trade_no = models.CharField(
+        u'在线支付流水号',
+        max_length=20,
+        null=True,
+        blank=True,
+        help_text=u'在线支付流水号',
+    )
+
+    is_refond = models.BooleanField(
+        u'是否退款',
+        default=False,
+        blank=True,
+        help_text=u'是否退款',
     )
 
     def __str__(self):

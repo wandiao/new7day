@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^supplier/', include(('new7.apps.supplier.urls','supplier'), namespace='supplier')),
     url(r'^client/', include(('new7.apps.client.urls','client'), namespace='client')),
     url(r'^depot/', include(('new7.apps.depot.urls','depot'), namespace='depot')),
+    url(r'^goods/', include(('new7.apps.goods.urls','goods'), namespace='goods')),
 ]

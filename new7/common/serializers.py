@@ -14,11 +14,23 @@ class OrderSerializer(serializers.ModelSerializer):
     fields = (
       'id',
       'invoice',
+      'order_unique',
       'supplier',
       'supplier_name',
       'tontact_phone',
       'operator',
       'delivery_date',
+      'deliver_type',
+      'deliver_money',
+      'deliver_address',
+      'status',
+      'pay_type',
+      'pay_from',
+      'is_pay',
+      'is_closed',
+      'flag',
+      'trade_no',
+      'is_refond',
       'depot',
       'code',
       'brand',
@@ -62,4 +74,22 @@ class DepotSerializer(serializers.ModelSerializer):
       'id',
       'type',
       'stock',
+    )
+
+class GoodsSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = models.Goods
+    fields = (
+      'id',
+      'name',
+      'code',
+      'img',
+      'brand',
+      'in_price',
+      'sale_price',
+      'stock',
+      'unit',
+      'spec',
+      'desc',
+      'is_book',
     )
