@@ -16,6 +16,8 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url, include
 from rest_framework_swagger.views import get_swagger_view
+from django.conf.urls.static import static
+from django.conf import settings
 
 schema_view = get_swagger_view(title='新七天接口文档')
 
@@ -29,3 +31,5 @@ urlpatterns = [
     url(r'^depot/', include(('new7.apps.depot.urls','depot'), namespace='depot')),
     url(r'^goods/', include(('new7.apps.goods.urls','goods'), namespace='goods')),
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
