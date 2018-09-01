@@ -97,6 +97,6 @@ class Goods(BaseModel):
         return self.name
     
     class Meta:
-        verbose_name = u'仓库'
+        verbose_name = u'商品'
         verbose_name_plural = verbose_name
 

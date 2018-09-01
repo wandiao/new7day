@@ -25,6 +25,8 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^docs/', schema_view),
+    url(r'^auth/', include(('new7.apps.auth.urls','auth'), namespace='auth')),
+    url(r'^account/', include(('new7.apps.account.urls','account'), namespace='account')),
     url(r'^order/', include(('new7.apps.order.urls','order'), namespace='order')),
     url(r'^supplier/', include(('new7.apps.supplier.urls','supplier'), namespace='supplier')),
     url(r'^client/', include(('new7.apps.client.urls','client'), namespace='client')),

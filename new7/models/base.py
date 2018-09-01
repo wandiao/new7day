@@ -25,3 +25,14 @@ class BaseModel(models.Model):
 
   class Meta:
     abstract = True
+
+class DeletedMixin(models.Model):
+  deleted = models.BooleanField(
+    u'是否已删除',
+    default=False,
+    blank=True,
+    help_text=u'是否已删除',
+  )
+
+  class Meta:
+    abstract = True

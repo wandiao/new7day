@@ -1,5 +1,6 @@
 # coding: utf-8
 
+from new7.models.account import *
 from new7.models.order import *
 from new7.models.supplier import *
 from new7.models.depot import *

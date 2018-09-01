@@ -4,6 +4,9 @@
 from rest_framework import serializers
 from new7 import models
 
+
+from . import mixins
+
 class OrderSerializer(serializers.ModelSerializer):
   supplier_name = serializers.CharField(
     source='supplier.name',
@@ -93,3 +96,71 @@ class GoodsSerializer(serializers.ModelSerializer):
       'desc',
       'is_book',
     )
+
+class ProfileSerializer(serializers.ModelSerializer):
+  
+  class Meta:
+    model = models.Profile
+    fields = (
+      'id',
+      'user',
+      'phone',
+      'name',
+      'role',
+      'phone_verified',
+    )
+
+ProfileDetailSerializer = ProfileSerializer
+
+class ProfileCreateSerializer(
+    mixins.OnePhonePerOneProfileMixin,
+    serializers.ModelSerializer
+):
+    class Meta:
+        model = models.Profile
+        read_only_fields = (
+            'id',
+            'user',
+            'phone_verified',
+        )
+        fields = read_only_fields + (
+            'phone',
+            'name',
+            'role',
+            'depot',
+        )
+
+    def validate(self, data):
+        phone = data.get('phone')
+        role = data['role']
+        if role == 'warekeeper':
+            if 'depot' not in data.keys():
+                raise serializers.ValidationError('没有指定库房')
+        if models.Profile.objects.filter(
+            phone=phone,
+            deleted=False,
+        ):
+            raise serializers.ValidationError(u'该手机号已经存在，不能创建')
+        return data
+
+
+class ProfileUpdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.Profile
+        read_only_fields = (
+            'id',
+            'user',
+            'phone_verified',
+        )
+        fields = read_only_fields + (
+            'name',
+            'role',
+            'phone',
+            'depot',
+        )
+
+    def validate_phone(self, value):
+        if models.Profile.objects.filter(phone=value, deleted=False).exclude(id=self.instance.id):
+            raise serializers.ValidationError(u'该手机号已经存在')
+        return value
+
