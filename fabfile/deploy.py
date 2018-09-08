@@ -25,15 +25,16 @@ def prod(reset=False):
     else:
         run('git checkout -- .')
     run('git pull --rebase origin master')
+    migrate()
 
 @task
 @roles('prod')
 def migrate():
   with cd('~/work/new7day/'):
     with prefix('workon new7day'):
-      run('pip list')
       run('python manage.py makemigrations')
       run('python manage.py migrate')
+      run('uwsgi --reload scripts/uwsgi.pid')
     
 
 
