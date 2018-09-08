@@ -7,7 +7,7 @@ from . import views
 
 urlpatterns = [
   url(
-    r'^token/profile/get/',
+    r'^login/',
     views.JWTLoginView.as_view(),
   ),
 ]
