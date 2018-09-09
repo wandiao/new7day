@@ -19,7 +19,7 @@ env.roledefs = {
 @task
 @roles('prod')
 def prod(reset=False):
-  with cd('~/work/new7day/'):
+  with cd('/work/new7day/'):
     if reset:
         run('git reset --hard HEAD~1')
     else:
@@ -30,7 +30,7 @@ def prod(reset=False):
 @task
 @roles('prod')
 def migrate():
-  with cd('~/work/new7day/'):
+  with cd('/work/new7day/'):
     with prefix('workon new7day'):
       run('python manage.py makemigrations')
       run('python manage.py migrate')
