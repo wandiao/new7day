@@ -22,6 +22,10 @@ class Profile(DeletedMixin, BaseModel):
     ('worker', u'业务员'),
     ('warekeeper', u'仓库管理员')
   )
+  GENDER = (
+    (1, u'男'),
+    (2, u'女'),
+  )
   content_type = models.ForeignKey(ContentType, on_delete=models.PROTECT)
   object_id = models.PositiveIntegerField()
   content_object = GenericForeignKey('content_type', 'object_id')
@@ -29,6 +33,7 @@ class Profile(DeletedMixin, BaseModel):
     u'角色',
     max_length=20,
     choices=ROLE_CHOICES,
+    default='worker',
     help_text=u'角色',
   )
   user = models.OneToOneField(
@@ -37,21 +42,49 @@ class Profile(DeletedMixin, BaseModel):
     on_delete=models.PROTECT,
     help_text=u'用户',
   )
-  phone = models.CharField(
-    u'电话',
-    max_length=20,
-    help_text=u'电话',
-  )
   name = models.CharField(
     u'姓名',
     max_length=20,
     help_text=u'姓名'
+  )
+  gender = models.CharField(
+    u'性别',
+    max_length=2,
+    choices=GENDER,
+    default=1,
+    help_text=u'性别',
+  )
+
+  code = models.CharField(
+    u'员工编号',
+    max_length=200,
+    unique=True,
+    null=True,
+    help_text=u'员工编号',
+  )
+
+  phone = models.CharField(
+    u'电话',
+    max_length=20,
+    help_text=u'电话',
   )
   phone_verified = models.BooleanField(
     u'电话是否已验证',
     default=False,
     blank=True,
     help_text=u'电话是否已验证',
+  )
+  address = models.CharField(
+    u'地址',
+    max_length=20,
+    blank=True,
+    null=True,
+    help_text=u'地址'
+  )
+  salary = models.IntegerField(
+    u'工资',
+    default=0,
+    help_text=u'工资'
   )
   depot = models.ForeignKey(
     'new7.Depot',

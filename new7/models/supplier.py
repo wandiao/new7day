@@ -9,6 +9,11 @@ class Supplier(BaseModel):
     '''
     供应商
     '''
+    SUPPLIER_TYPE = (
+        ('a', u'甲'),
+        ('b', u'乙'),
+        ('c', u'丙'),
+    )
     name = models.CharField(
         u'单位名称',
         max_length=20,
@@ -19,9 +24,17 @@ class Supplier(BaseModel):
     type = models.CharField(
         u'供应商分类',
         max_length=20,
+        choices=SUPPLIER_TYPE,
+        default='a',
+        blank=True,
+        help_text=u'供应商分类',
+    )
+    license_code = models.CharField(
+        u'执照编号',
+        max_length=20,
         null=True,
         blank=True,
-        help_text=u'单位名称',
+        help_text=u'执照编号',
     )
     tontact_phone = models.CharField(
         u'联系电话',
@@ -44,12 +57,12 @@ class Supplier(BaseModel):
         blank=True,
         help_text=u'公司地址',
     )
-    account = models.CharField(
-        u'账户',
+    operator = models.CharField(
+        u'经办人',
         max_length=200,
         null=True,
         blank=True,
-        help_text=u'账户',
+        help_text=u'经办人',
     )
 
     def __str__(self):

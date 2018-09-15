@@ -16,6 +16,11 @@ class ProfileSerializer(serializers.ModelSerializer):
       'user',
       'phone',
       'name',
+      'code',
+      'gender',
+      'address',
+      'salary',
+      'depot',
       'role',
       'phone_verified',
     )
@@ -36,8 +41,12 @@ class ProfileCreateSerializer(
         fields = read_only_fields + (
             'phone',
             'name',
+            'code',
             'role',
             'depot',
+            'gender',
+            'address',
+            'salary',
         )
 
     def validate(self, data):
@@ -63,10 +72,14 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             'phone_verified',
         )
         fields = read_only_fields + (
+            'phone',
             'name',
             'role',
-            'phone',
+            'code',
             'depot',
+            'gender',
+            'address',
+            'salary',
         )
 
     def validate_phone(self, value):
@@ -125,7 +138,8 @@ class SupplierSerializer(serializers.ModelSerializer):
       'contact_name',
       'tontact_phone',
       'address',
-      'account',
+      'operator',
+      'license_code',
     )
 
 class ClientSeralizer(serializers.ModelSerializer):

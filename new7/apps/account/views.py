@@ -7,11 +7,13 @@ from rest_framework import (
 
 from new7 import models
 from new7.common import serializers as common_serializers
+from new7.common.schema import auto_schema, DocParam
 from new7.common.utils import (
     create_user,
 )
 
 from . import serializers
+from . import filters
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
@@ -21,6 +23,11 @@ class ProfileViewSet(viewsets.ModelViewSet):
     queryset = models.Profile.objects.filter(deleted=False)
     serializer_class = common_serializers.ProfileSerializer
     search_fields = ('name', 'phone')
+    filter_class = filters.ProfileFilterSet
+    schema = auto_schema([
+        DocParam('name', description='名称'),
+        DocParam('code', description='员工编号'),
+    ])
 
     def get_queryset(self):
         if self.action == 'list':
