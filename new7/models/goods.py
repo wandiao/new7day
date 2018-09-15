@@ -16,6 +16,14 @@ class Goods(BaseModel):
         help_text=u'商品名称',
     )
 
+    short_name = models.CharField(
+        u'商品简称',
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text=u'商品名称',
+    )
+
     code = models.CharField(
         u'商品编码',
         null=True,
@@ -23,6 +31,7 @@ class Goods(BaseModel):
         max_length=100,
         help_text=u'商品编码',
     )
+
 
     img = models.CharField(
         u'商品图片',

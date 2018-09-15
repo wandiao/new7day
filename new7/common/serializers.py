@@ -85,6 +85,7 @@ class GoodsSerializer(serializers.ModelSerializer):
     fields = (
       'id',
       'name',
+      'short_name',
       'code',
       'img',
       'brand',
