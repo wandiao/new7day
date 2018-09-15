@@ -201,5 +201,13 @@ JWT_AUTH = {
 
 SWAGGER_SETTINGS = {
     "token_type": "jwt",
+    'SECURITY_DEFINITIONS': {
+        'basic': {
+            'type': 'basic'
+        }
+    },
 }
+
+LOGIN_URL = 'rest_framework:login'
+LOGOUT_URL = 'rest_framework:logout'
 
