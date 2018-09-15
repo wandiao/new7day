@@ -34,6 +34,12 @@ class Depot(BaseModel):
       help_text=u'库存'
     )
 
+    cubage = models.IntegerField(
+      u'容量',
+      default=0,
+      help_text=u'容量'
+    )
+
     def __str__(self):
         return self.name
     

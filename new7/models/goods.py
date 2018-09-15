@@ -21,7 +21,7 @@ class Goods(BaseModel):
         max_length=100,
         null=True,
         blank=True,
-        help_text=u'商品名称',
+        help_text=u'商品简称',
     )
 
     code = models.CharField(
