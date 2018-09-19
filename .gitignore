@@ -17,3 +17,5 @@ nosetests.xml
 .python-version
 *tags*
 *.log
+uwsgi.sock
+uwsgi.pid
