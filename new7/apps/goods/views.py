@@ -14,6 +14,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
   """
   queryset = models.Goods.objects.all()
   serializer_class = common_serializers.GoodsSerializer
+  search_fields = ('name', 'short_name')
   filter_class = filters.GoodsFilterSet
   schema = auto_schema([
     DocParam('name', description='名称'),
