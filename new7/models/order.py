@@ -218,6 +218,14 @@ class OrderGoods(BaseModel):
     '''
     订单商品
     '''
+    order = models.ForeignKey(
+        'new7.Order',
+        verbose_name=u'订单',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'订单',
+    )
     goods = models.ForeignKey(
         'new7.Goods',
         verbose_name=u'商品',
