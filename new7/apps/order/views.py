@@ -38,11 +38,11 @@ class OrderViewSet(viewsets.ModelViewSet):
 
   queryset = models.Order.objects.all()
   serializer_class = common_serializers.OrderSerializer
-  # schema = auto_schema([
-  #   DocParam('invoice', description='票号', location='form',required=True),
-  #   DocParam('order_unique', description='流水号', location='form',required=True),
-  #   DocParam('order_goods', description='编码', location='form', required=True, type='array'),
-  # ])
+  schema = auto_schema([
+    DocParam('invoice', description='票号', location='form'),
+    DocParam('order_unique', description='流水号', location='form'),
+    DocParam('order_goods', description='商品信息列表', location='form', type='array'),
+  ])
 
   def get_serializer_class(self):
     if self.action == 'new':
