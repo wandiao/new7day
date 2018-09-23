@@ -233,5 +233,12 @@ class OrderGoods(BaseModel):
       help_text=u'数量'
     )
 
+    def __str__(self):
+        return self.invoice
+
+    class Meta:
+        verbose_name = u'订单商品'
+        verbose_name_plural = verbose_name
+
 
 
