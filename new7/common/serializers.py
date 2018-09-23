@@ -3,6 +3,7 @@
 
 from rest_framework import serializers
 from new7 import models
+from django.db.transaction import atomic
 
 
 from . import mixins
@@ -87,12 +88,37 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(u'该手机号已经存在')
         return value
 
+class OrderGoodsListSerializer(serializers.Serializer):
+  goods_id = serializers.CharField(
+    max_length=20,
+    help_text=u'商品id',
+  )
+  count = serializers.CharField(
+    max_length=20,
+    help_text=u'数量',
+  )
+
+class OrderGoodsSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = models.OrderGoods
+    fields = (
+      'order',
+      'goods',
+      'count',
+    )
 
 
 class OrderSerializer(serializers.ModelSerializer):
   supplier_name = serializers.CharField(
     source='supplier.name',
     read_only=True
+  )
+  order_goods = serializers.SlugRelatedField(
+    many=True,
+    queryset=models.OrderGoods.objects.all(),
+    required=False,
+    slug_field='id',
+    help_text=u'订单id',
   )
   class Meta:
     model = models.Order
@@ -125,8 +151,54 @@ class OrderSerializer(serializers.ModelSerializer):
       'total_price',
       'production_date',
       'expired_date',
-      'remark'
+      'remark',
+      'order_goods',
     )
+
+class OrderCreateSerializer(serializers.ModelSerializer):
+  goods_info = OrderGoodsListSerializer(
+        many=True,
+        help_text=u'商品信息列表',
+        required=False,
+    )
+  class Meta:
+    model = models.Order
+    fields = (
+      'id',
+      'invoice',
+      'order_unique',
+      'supplier',
+      'tontact_phone',
+      'operator',
+      'delivery_date',
+      'deliver_type',
+      'deliver_money',
+      'deliver_address',
+      'status',
+      'pay_type',
+      'pay_from',
+      'is_pay',
+      'is_closed',
+      'flag',
+      'trade_no',
+      'is_refond',
+      'depot',
+      'code',
+      'brand',
+      'specification',
+      'unit',
+      'price',
+      'total_price',
+      'production_date',
+      'expired_date',
+      'remark',
+      'goods_info',
+    )
+  @atomic
+  def create(self, validate_data):
+      goods_info = validate_data.pop('goods_info')
+      instance = models.Order.objects.create(**validate_data)
+      return instance
 
 class SupplierSerializer(serializers.ModelSerializer):
   class Meta:

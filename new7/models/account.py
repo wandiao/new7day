@@ -47,9 +47,8 @@ class Profile(DeletedMixin, BaseModel):
     max_length=20,
     help_text=u'姓名'
   )
-  gender = models.CharField(
+  gender = models.IntegerField(
     u'性别',
-    max_length=2,
     choices=GENDER,
     default=1,
     help_text=u'性别',
