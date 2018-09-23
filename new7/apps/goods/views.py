@@ -16,9 +16,9 @@ class GoodsViewSet(viewsets.ModelViewSet):
   serializer_class = common_serializers.GoodsSerializer
   search_fields = ('name', 'short_name')
   filter_class = filters.GoodsFilterSet
-  schema = auto_schema([
-    DocParam('name', description='名称'),
-    DocParam('short_name', description='简称'),
-    DocParam('code', description='编码'),
-    DocParam('spec', description='规格'),
-  ])
+  # schema = auto_schema([
+  #   DocParam('name', description='名称'),
+  #   DocParam('short_name', description='简称'),
+  #   DocParam('code', description='编码'),
+  #   DocParam('spec', description='规格'),
+  # ])

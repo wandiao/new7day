@@ -167,6 +167,7 @@ class DepotSerializer(serializers.ModelSerializer):
       'type',
       'stock',
       'cubage',
+      'desc',
       'depot_keepers',
     )
 

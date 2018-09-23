@@ -16,9 +16,5 @@ class DepotViewSet(viewsets.ModelViewSet):
   serializer_class = common_serializers.DepotSerializer
   filter_class = filters.DepotFilterSet
   search_fields = ('name')
-  schema = auto_schema([
-    DocParam('name', description='名称'),
-    DocParam('type', description='仓库类型'),
-  ])
 
 

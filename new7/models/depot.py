@@ -40,6 +40,14 @@ class Depot(BaseModel):
       help_text=u'容量'
     )
 
+    desc = models.CharField(
+        u'描述',
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text=u'描述',
+    )
+
     def __str__(self):
         return self.name
     

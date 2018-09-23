@@ -62,12 +62,10 @@ class Goods(BaseModel):
         help_text=u'商品售价',
     )
 
-    stock = models.CharField(
-        u'库存',
-        max_length=100,
-        null=True,
-        blank=True,
-        help_text=u'库存',
+    stock = models.IntegerField(
+      u'库存',
+      default=0,
+      help_text=u'库存'
     )
 
     unit = models.CharField(
