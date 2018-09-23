@@ -163,6 +163,7 @@ class DepotSerializer(serializers.ModelSerializer):
     model = models.Depot
     fields = (
       'id',
+      'name',
       'type',
       'stock',
       'cubage',
