@@ -88,17 +88,50 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(u'该手机号已经存在')
         return value
 
+class GoodsSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = models.Goods
+    fields = (
+      'id',
+      'name',
+      'short_name',
+      'code',
+      'img',
+      'brand',
+      'in_price',
+      'sale_price',
+      'stock',
+      'unit',
+      'spec',
+      'desc',
+      'is_book',
+    )
+
 class OrderGoodsListSerializer(serializers.Serializer):
   goods_id = serializers.CharField(
     max_length=20,
     help_text=u'商品id',
   )
-  count = serializers.CharField(
-    max_length=20,
+  count = serializers.IntegerField(
+    required=True,
     help_text=u'数量',
   )
 
 class OrderGoodsSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = models.OrderGoods
+    fields = (
+      'order',
+      'goods',
+      'count',
+    )
+
+class OrderGoodsDetailSerializer(serializers.ModelSerializer):
+  goods = GoodsSerializer(
+    many=False,
+    help_text=u'订单商品',
+    read_only=True
+  )
   class Meta:
     model = models.OrderGoods
     fields = (
@@ -113,12 +146,10 @@ class OrderSerializer(serializers.ModelSerializer):
     source='supplier.name',
     read_only=True
   )
-  order_goods = serializers.SlugRelatedField(
+  order_goods = OrderGoodsDetailSerializer(
     many=True,
-    queryset=models.OrderGoods.objects.all(),
-    required=False,
-    slug_field='id',
-    help_text=u'订单id',
+    help_text=u'订单商品',
+    read_only=True
   )
   class Meta:
     model = models.Order
@@ -241,23 +272,4 @@ class DepotSerializer(serializers.ModelSerializer):
       'cubage',
       'desc',
       'depot_keepers',
-    )
-
-class GoodsSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = models.Goods
-    fields = (
-      'id',
-      'name',
-      'short_name',
-      'code',
-      'img',
-      'brand',
-      'in_price',
-      'sale_price',
-      'stock',
-      'unit',
-      'spec',
-      'desc',
-      'is_book',
     )

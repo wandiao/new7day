@@ -10,7 +10,25 @@ from . import filters
 
 class DepotViewSet(viewsets.ModelViewSet):
   """
-    仓库接口
+  仓库接口
+
+  retrieve:
+  仓库详情
+
+  list:
+  仓库列表
+
+  create:
+  新增仓库
+
+  partial_update:
+  修改仓库
+
+  update:
+  修改仓库
+
+  delete:
+  删除仓库
   """
   queryset = models.Depot.objects.all()
   serializer_class = common_serializers.DepotSerializer

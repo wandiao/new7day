@@ -10,7 +10,25 @@ from . import filters
 
 class GoodsViewSet(viewsets.ModelViewSet):
   """
-    商品接口
+  商品接口
+
+  retrieve:
+  商品详情
+
+  list:
+  商品列表
+
+  create:
+  新增商品
+
+  partial_update:
+  修改商品
+
+  update:
+  修改商品
+
+  delete:
+  删除商品
   """
   queryset = models.Goods.objects.all()
   serializer_class = common_serializers.GoodsSerializer

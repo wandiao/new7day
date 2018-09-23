@@ -17,9 +17,27 @@ from . import filters
 
 
 class ProfileViewSet(viewsets.ModelViewSet):
-    '''
+    """
     账户接口
-    '''
+
+    retrieve:
+    账户详情
+
+    list:
+    账户列表
+
+    create:
+    新增账户
+
+    partial_update:
+    修改账户
+
+    update:
+    修改账户
+
+    delete:
+    删除账户
+    """
     queryset = models.Profile.objects.filter(deleted=False)
     serializer_class = common_serializers.ProfileSerializer
     search_fields = ('name', 'phone')

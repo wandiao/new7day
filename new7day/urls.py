@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.conf.urls import url, include
 from rest_framework_swagger.views import get_swagger_view
+from rest_framework.documentation import include_docs_urls
 from django.conf.urls.static import static
 from django.conf import settings
 
@@ -25,6 +26,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
     url(r'^docs/', schema_view),
+    url(r'^docs_ex/', include_docs_urls(title='My API title')),
     url(r'^auth/', include(('new7.apps.auth.urls','auth'), namespace='auth')),
     url(r'^account/', include(('new7.apps.account.urls','account'), namespace='account')),
     url(r'^order/', include(('new7.apps.order.urls','order'), namespace='order')),
