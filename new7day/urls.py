@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import url, include
-from rest_framework_swagger.views import get_swagger_view
+# from rest_framework_swagger.views import get_swagger_view
 from rest_framework.documentation import include_docs_urls
 from django.conf.urls.static import static
 from django.conf import settings
@@ -35,12 +35,11 @@ schema_view = get_schema_view(
    permission_classes=(AllowAny,),
 )
 
-from utils.swagger_view import SwaggerSchemaView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
-    url(r'^docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    url(r'^docs/', schema_view.with_ui('swagger', cache_timeout=0), name='新七天接口文档'),
     url(r'^docs_ex/', include_docs_urls(title='My API title')),
     url(r'^auth/', include(('new7.apps.auth.urls','auth'), namespace='auth')),
     url(r'^account/', include(('new7.apps.account.urls','account'), namespace='account')),
