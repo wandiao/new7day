@@ -24,6 +24,7 @@ class ProfileSerializer(serializers.ModelSerializer):
       'depot',
       'role',
       'birth',
+      'desc',
       'phone_verified',
     )
 
@@ -50,6 +51,7 @@ class ProfileCreateSerializer(
             'address',
             'salary',
             'birth',
+            'desc',
         )
 
     def validate(self, data):
@@ -85,6 +87,8 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             'gender',
             'address',
             'salary',
+            'birth',
+            'desc',
         )
 
     def validate_phone(self, value):
@@ -260,6 +264,7 @@ class ClientSeralizer(serializers.ModelSerializer):
       'contact_name',
       'tontact_phone',
       'address',
+      'desc',      
     )
 
 class DepotSerializer(serializers.ModelSerializer):
