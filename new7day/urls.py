@@ -19,13 +19,28 @@ from rest_framework_swagger.views import get_swagger_view
 from rest_framework.documentation import include_docs_urls
 from django.conf.urls.static import static
 from django.conf import settings
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+from rest_framework.permissions import AllowAny
 
-schema_view = get_swagger_view(title='新七天接口文档')
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="新七天接口文档",
+      default_version='v1',
+      description="新七天接口文档",
+   ),
+   validators=['flex', 'ssv'],
+   public=True,
+   permission_classes=(AllowAny,),
+)
+
+from utils.swagger_view import SwaggerSchemaView
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls')),
-    url(r'^docs/', schema_view),
+    url(r'^docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^docs_ex/', include_docs_urls(title='My API title')),
     url(r'^auth/', include(('new7.apps.auth.urls','auth'), namespace='auth')),
     url(r'^account/', include(('new7.apps.account.urls','account'), namespace='account')),
