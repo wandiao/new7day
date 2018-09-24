@@ -92,6 +92,13 @@ class Profile(DeletedMixin, BaseModel):
     default=0,
     help_text=u'工资'
   )
+  desc = models.CharField(
+      u'描述',
+      max_length=100,
+      null=True,
+      blank=True,
+      help_text=u'描述',
+  )
   depot = models.ForeignKey(
     'new7.Depot',
     verbose_name=u'负责仓库',

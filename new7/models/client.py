@@ -36,6 +36,13 @@ class Client(BaseModel):
         blank=True,
         help_text=u'地址',
     )
+    desc = models.CharField(
+        u'描述',
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text=u'描述',
+    )
 
     def __str__(self):
         return self.name
