@@ -23,6 +23,7 @@ class ProfileSerializer(serializers.ModelSerializer):
       'salary',
       'depot',
       'role',
+      'birth',
       'phone_verified',
     )
 
@@ -48,14 +49,17 @@ class ProfileCreateSerializer(
             'gender',
             'address',
             'salary',
+            'birth',
         )
 
     def validate(self, data):
         phone = data.get('phone')
-        role = data['role']
-        if role == 'warekeeper':
+        if 'role' in data:
+          role = data['role']
+          if role == 'warekeeper':
             if 'depot' not in data.keys():
                 raise serializers.ValidationError('没有指定库房')
+        
         if models.Profile.objects.filter(
             phone=phone,
             deleted=False,

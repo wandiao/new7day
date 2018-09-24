@@ -54,6 +54,13 @@ class Profile(DeletedMixin, BaseModel):
     help_text=u'性别',
   )
 
+  birth = models.DateTimeField(
+      u'出生日期',
+      blank=True,
+      null=True,
+      help_text=u'出生日期',
+  )
+
   code = models.CharField(
     u'员工编号',
     max_length=200,
