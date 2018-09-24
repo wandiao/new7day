@@ -31,7 +31,7 @@ schema_view = get_schema_view(
       description="新七天接口文档",
    ),
    validators=['flex', 'ssv'],
-   public=True,
+   public=False,
    permission_classes=(AllowAny,),
 )
 

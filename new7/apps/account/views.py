@@ -42,10 +42,6 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = common_serializers.ProfileSerializer
     search_fields = ('name', 'phone')
     filter_class = filters.ProfileFilterSet
-    # schema = auto_schema([
-    #     DocParam('name', description='名称'),
-    #     DocParam('code', description='员工编号'),
-    # ])
 
     def get_queryset(self):
         if self.action == 'list':
