@@ -242,7 +242,9 @@ class SupplierSerializer(serializers.ModelSerializer):
       'tontact_phone',
       'address',
       'operator',
+      'operator_name',
       'license_code',
+      'desc',
     )
 
 class ClientSeralizer(serializers.ModelSerializer):

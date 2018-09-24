@@ -10,14 +10,32 @@ from . import filters
 
 class SupplierViewSet(viewsets.ModelViewSet):
   """
-    供应商接口
+  供应商接口
+
+  retrieve:
+  供应商详情
+
+  list:
+  供应商列表
+
+  create:
+  新增供应商
+
+  partial_update:
+  修改供应商
+
+  update:
+  修改供应商
+
+  delete:
+  删除供应商
   """
   queryset = models.Supplier.objects.all()
   serializer_class = common_serializers.SupplierSerializer
   filter_class = filters.SupplierFilterSet
   search_fields = ('name')
-  schema = auto_schema([
-    DocParam('name', description='名称'),
-    DocParam('type', description='供应商类型'),
-  ])
+  # schema = auto_schema([
+  #   DocParam('name', description='名称'),
+  #   DocParam('type', description='供应商类型'),
+  # ])
 

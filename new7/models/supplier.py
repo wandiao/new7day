@@ -10,9 +10,9 @@ class Supplier(BaseModel):
     供应商
     '''
     SUPPLIER_TYPE = (
-        ('a', u'甲'),
-        ('b', u'乙'),
-        ('c', u'丙'),
+        ('formal', u'正规合作'),
+        ('finance', u'商铺合作'),
+        ('stall', u'摊贩合作'),
     )
     name = models.CharField(
         u'单位名称',
@@ -63,6 +63,20 @@ class Supplier(BaseModel):
         null=True,
         blank=True,
         help_text=u'经办人',
+    )
+    operator_name = models.CharField(
+        u'经办人电话',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'经办人电话',
+    )
+    desc = models.CharField(
+        u'描述',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'描述',
     )
 
     def __str__(self):
