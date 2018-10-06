@@ -3,28 +3,21 @@
 import datetime
 
 from rest_framework_jwt.settings import api_settings
-from rest_framework_jwt.views import ObtainJSONWebToken
+from rest_framework_jwt.views import ObtainJSONWebToken, APIView
+
+from django.views.generic import View
 
 from rest_framework.response import Response
 
 from new7.common import (
     serializers as common_serializers,
 )
+from django.http import JsonResponse
 from . import serializers
 
 class JWTLoginView(ObtainJSONWebToken):
   '''
     登录接口
-    ---
-    POST:
-      parameters:
-        - name: username
-          description: 用户名
-          type: string
-        - name: password
-          description: 密码
-          type: string
-      omit_serializer: true
   '''
   serializer_class = serializers.LoginSerializer
 
@@ -44,6 +37,18 @@ class JWTLoginView(ObtainJSONWebToken):
       })
       return Response(response_data)
     return Response(serializer.errors, status=400)
+
+class OSSView(APIView):
+  """
+  oss文件上传
+  """
+  def get(self, request):
+    return Response(dict(
+      accessKeyId='LTAIYMdVVBM1Uzj2',
+      accessKeySecret='v6zlAlinTrFR0DHiWf7upkhZWAxbfg',
+      region='oss-cn-beijing',
+      bucket='new7day',
+    ))
 
 
 

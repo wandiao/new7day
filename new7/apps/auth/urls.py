@@ -10,4 +10,9 @@ urlpatterns = [
     r'^login/',
     views.JWTLoginView.as_view(),
   ),
+  url(
+    r'^oss/',
+    views.OSSView.as_view(),
+    name='oss auth',
+  )
 ]
