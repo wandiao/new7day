@@ -5,5 +5,6 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'goods', views.GoodsViewSet)
+router.register(r'goodsrecord', views.GoodsRecordViewSet)
 
 urlpatterns = router.urls

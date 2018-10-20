@@ -115,6 +115,32 @@ class GoodsSerializer(serializers.ModelSerializer):
       'is_book',
     )
 
+class GoodsRecordSerializer(serializers.ModelSerializer):
+  goods_name = serializers.CharField(
+    source='goods.name',
+    read_only=True
+  )
+  record_depot_name = serializers.CharField(
+    source='record_depot.name',
+    read_only=True
+  )
+  class Meta:
+    model = models.GoodsRecord
+    fields = (
+      'goods',
+      'goods_name',
+      'count',
+      'unit',
+      'price',
+      'record_type',
+      'record_depot',
+      'record_depot_name',
+      'record_time',
+      'record_source',
+      'operator_account',
+      'remarks',
+    )
+
 class OrderGoodsListSerializer(serializers.Serializer):
   goods_id = serializers.CharField(
     max_length=20,

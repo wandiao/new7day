@@ -107,3 +107,90 @@ class Goods(BaseModel):
         verbose_name = u'商品'
         verbose_name_plural = verbose_name
 
+
+class GoodsRecord(BaseModel):
+    '''
+    商品操作
+    '''
+
+    OPERATE_TYPE = (
+        ('depot_in', u'入库'),
+        ('depot_out', u'出库'),
+    )
+    goods =  models.ForeignKey(
+        'new7.Goods',
+        verbose_name=u'商品',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'商品',
+    )
+
+    record_type = models.CharField(
+        u'记录类型',
+        default='main',
+        max_length=20,
+        choices=OPERATE_TYPE,
+        help_text=u'操作类型',
+    )
+
+    count = models.IntegerField(
+      u'数量',
+      default=0,
+      help_text=u'数量'
+    )
+
+    price = models.FloatField(
+        u'价格',
+        blank=True,
+        null=True,
+        help_text=u'价格',
+    )
+
+    unit = models.CharField(
+        u'单位',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'单位',
+    )
+
+    operator_account = models.CharField(
+        u'操作员账号',
+        max_length=20,
+        null=True,
+        help_text=u'操作员账号',
+    )
+
+    record_time = models.DateTimeField(
+        u'记录时间',
+        blank=True,
+        null=True,
+        help_text=u'记录时间',
+    )
+
+    record_source = models.CharField(
+        u'操作来源',
+        max_length=50,
+        blank=True,
+        default='',
+        help_text=u'操作来源',
+    )
+
+    record_depot = models.ForeignKey(
+        'new7.Depot',
+        verbose_name=u'操作仓库',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'操作仓库',
+    )
+
+    remarks = models.TextField(
+        u'备注',
+        blank=True,
+        default='',
+        help_text=u'备注',
+    )
+
+    

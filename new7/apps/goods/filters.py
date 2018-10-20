@@ -14,3 +14,11 @@ class GoodsFilterSet(django_filters.FilterSet):
             'code',
             'spec'
         )
+
+class GoodsRecordFilterSet(django_filters.FilterSet):
+    class Meta:
+        model = models.GoodsRecord
+        fields = (
+            'record_depot',
+            'record_type',
+        )
