@@ -16,9 +16,13 @@ class GoodsFilterSet(django_filters.FilterSet):
         )
 
 class GoodsRecordFilterSet(django_filters.FilterSet):
+    goods_id = django_filters.CharFilter(
+        name='goods',
+    )
     class Meta:
         model = models.GoodsRecord
         fields = (
+            'goods_id',
             'record_depot',
             'record_type',
         )

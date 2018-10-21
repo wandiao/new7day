@@ -99,6 +99,13 @@ class Goods(BaseModel):
         help_text=u'是否预定',
     )
 
+    @property
+    def stock_status(self):
+        if self.stock > 10:
+          return 'normal'
+        else:
+          return 'warn'
+
 
     def __str__(self):
         return self.name

@@ -115,6 +115,26 @@ class GoodsSerializer(serializers.ModelSerializer):
       'is_book',
     )
 
+class GoodsStockSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = models.Goods
+    fields = (
+      'id',
+      'name',
+      'short_name',
+      'code',
+      'img',
+      'brand',
+      'in_price',
+      'sale_price',
+      'stock',
+      'unit',
+      'spec',
+      'desc',
+      'is_book',
+      'stock_status',
+    )
+
 class GoodsRecordSerializer(serializers.ModelSerializer):
   goods_name = serializers.CharField(
     source='goods.name',

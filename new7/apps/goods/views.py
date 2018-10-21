@@ -5,8 +5,17 @@ from rest_framework import viewsets
 from new7 import models
 from new7.common import serializers as common_serializers
 from new7.common.schema import auto_schema, DocParam
+from rest_framework.response import Response
+from rest_framework import (
+    viewsets,
+    mixins,
+    status,
+    serializers as rest_serializers
+)
+from rest_framework.decorators import list_route, detail_route
 
 from . import filters
+from new7.common.pagination import Pagination
 
 class GoodsViewSet(viewsets.ModelViewSet):
   """
@@ -27,6 +36,9 @@ class GoodsViewSet(viewsets.ModelViewSet):
   update:
   修改商品
 
+  stock:
+  库存查询
+
   delete:
   删除商品
   """
@@ -34,6 +46,20 @@ class GoodsViewSet(viewsets.ModelViewSet):
   serializer_class = common_serializers.GoodsSerializer
   search_fields = ('name', 'short_name')
   filter_class = filters.GoodsFilterSet
+
+  def get_serializer_class(self):
+    if self.action == 'stock':
+      return common_serializers.GoodsStockSerializer
+    return common_serializers.GoodsSerializer
+
+  @list_route(methods=['get'])
+  def stock(self, request, *args, **kwargs):
+    pagination_class = Pagination
+    paginator = pagination_class()
+    goods = paginator.paginate_queryset(self.filter_queryset(self.queryset.all()), request)
+    serializer = self.get_serializer(goods, many=True)
+    return paginator.get_paginated_response(serializer.data)
+
 
 class GoodsRecordViewSet(viewsets.ModelViewSet):
   """
