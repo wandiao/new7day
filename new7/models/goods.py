@@ -134,6 +134,15 @@ class GoodsRecord(BaseModel):
         help_text=u'操作类型',
     )
 
+    order = models.ForeignKey(
+        'new7.Order',
+        verbose_name=u'所属订单',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'所属订单',
+    )
+
     count = models.IntegerField(
       u'数量',
       default=0,

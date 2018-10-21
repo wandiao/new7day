@@ -1,6 +1,7 @@
 # -*- coding:utf-8 -*-
 from __future__ import unicode_literals
 
+import datetime
 from rest_framework import viewsets, status
 from rest_framework.decorators import list_route, detail_route
 from django.db.transaction import atomic
@@ -55,16 +56,39 @@ class OrderViewSet(viewsets.ModelViewSet):
   def new(self, request, *args, **kwargs):
     serializer = self.get_serializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    goods_info = serializer.validated_data['goods_info']
-    data = serializer.save()
+    req_data = serializer.validated_data
+    goods_info = req_data['goods_info']
+    operator = self.request.user.profile
+    operate_time = datetime.datetime.now()
+    order_data = serializer.save()
     for goods in goods_info:
       data = dict(
         goods=goods['goods_id'],
         count=goods['count'],
-        order=data.id
+        price=goods.get('price', 0),
+        unit=goods.get('unit', 0),
+        order=order_data.id,
       )
+      record_data = dict(
+        record_type=req_data.get('order_type', 'depot_in'),
+        record_time=operate_time,
+        order=order_data.id,
+        goods=goods['goods_id'],
+        operator_account=operator.phone,
+        record_depot=req_data.get('depot', None),
+        remarks=req_data.get('remarks', ''),
+        price=goods.get('price', 0),
+        unit=goods.get('unit', 0),
+      )
+      device_record = common_serializers.GoodsRecordSerializer(data=record_data)
+      device_record.is_valid(raise_exception=True)
+      device_record.save()
       instance = models.Goods.objects.get(pk=goods['goods_id'])
-      stock = instance.stock + goods['count']
+      if req_data['order_type'] == 'depot_in':
+        stock = instance.stock + goods['count']
+      elif req_data['order_type'] == 'depot_out':
+        stock = instance.stock - goods['count']
+      
       goods_serializer = common_serializers.GoodsSerializer(instance, data={
         'stock': stock
       })

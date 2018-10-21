@@ -9,6 +9,11 @@ class Order(BaseModel):
     '''
     订单
     '''
+
+    OPERATE_TYPE = (
+        ('depot_in', u'入库'),
+        ('depot_out', u'出库'),
+    )
     invoice = models.CharField(
         u'票号',
         max_length=100,
@@ -22,6 +27,12 @@ class Order(BaseModel):
         null=True,
         unique=True,
         help_text=u'流水号',
+    )
+    order_type = models.CharField(
+        u'订单类型',
+        max_length=20,
+        choices=OPERATE_TYPE,
+        help_text=u'订单类型',
     )
     supplier = models.ForeignKey(
         'new7.Supplier',
@@ -240,6 +251,21 @@ class OrderGoods(BaseModel):
       u'数量',
       default=1,
       help_text=u'数量'
+    )
+
+    price = models.FloatField(
+        u'价格',
+        blank=True,
+        null=True,
+        help_text=u'价格',
+    )
+
+    unit = models.CharField(
+        u'单位',
+        max_length=200,
+        null=True,
+        blank=True,
+        help_text=u'单位',
     )
 
 

@@ -128,6 +128,7 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
     model = models.GoodsRecord
     fields = (
       'goods',
+      'order',
       'goods_name',
       'count',
       'unit',
@@ -150,6 +151,13 @@ class OrderGoodsListSerializer(serializers.Serializer):
     required=True,
     help_text=u'数量',
   )
+  price = serializers.FloatField(
+    help_text=u'价格',
+  )
+  unit = serializers.CharField(
+    max_length=20,
+    help_text=u'单位',
+  )
 
 class OrderGoodsSerializer(serializers.ModelSerializer):
   class Meta:
@@ -158,6 +166,8 @@ class OrderGoodsSerializer(serializers.ModelSerializer):
       'order',
       'goods',
       'count',
+      'price',
+      'unit',
     )
 
 class OrderGoodsDetailSerializer(serializers.ModelSerializer):
@@ -172,6 +182,8 @@ class OrderGoodsDetailSerializer(serializers.ModelSerializer):
       'order',
       'goods',
       'count',
+      'price',
+      'unit',
     )
 
 
@@ -191,6 +203,7 @@ class OrderSerializer(serializers.ModelSerializer):
       'id',
       'invoice',
       'order_unique',
+      'order_type',
       'supplier',
       'supplier_name',
       'tontact_phone',
