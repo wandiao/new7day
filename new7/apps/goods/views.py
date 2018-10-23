@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from rest_framework import viewsets
+from django.db.models import Sum
 from new7 import models
 from new7.common import serializers as common_serializers
 from new7.common.schema import auto_schema, DocParam
@@ -37,7 +38,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
   修改商品
 
   stock:
-  库存查询
+  商品库存
 
   delete:
   删除商品
@@ -50,6 +51,8 @@ class GoodsViewSet(viewsets.ModelViewSet):
   def get_serializer_class(self):
     if self.action == 'stock':
       return common_serializers.GoodsStockSerializer
+    elif self.action == 'cost':
+      return common_serializers.GoodsRecordSerializer
     return common_serializers.GoodsSerializer
 
   @list_route(methods=['get'])
@@ -59,6 +62,17 @@ class GoodsViewSet(viewsets.ModelViewSet):
     goods = paginator.paginate_queryset(self.filter_queryset(self.queryset.all()), request)
     serializer = self.get_serializer(goods, many=True)
     return paginator.get_paginated_response(serializer.data)
+
+  @list_route()
+  def cost(self, request, *args, **kwargs):
+    records = models.GoodsRecord.objects.values('goods').annotate(s_mount = Sum('count'), s_price=Sum('price')).all()
+    print(records)
+    serializer = self.get_serializer(records, many=True)
+    return Response(serializer.data)
+
+
+
+
 
 
 class GoodsRecordViewSet(viewsets.ModelViewSet):

@@ -209,4 +209,24 @@ class GoodsRecord(BaseModel):
         help_text=u'备注',
     )
 
+    amount = models.DecimalField(
+        u'成本',
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        help_text=u'成本',
+
+    )
+
+    def save(self, *args, **kwargs):
+        self.amount = self.price * self.count
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.create_time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    class Meta:
+        verbose_name = u'商品记录'
+        verbose_name_plural = verbose_name
+
     

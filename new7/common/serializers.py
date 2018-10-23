@@ -135,6 +135,8 @@ class GoodsStockSerializer(serializers.ModelSerializer):
       'stock_status',
     )
 
+
+
 class GoodsRecordSerializer(serializers.ModelSerializer):
   goods_name = serializers.CharField(
     source='goods.name',
@@ -160,7 +162,9 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
       'record_source',
       'operator_account',
       'remarks',
+      'amount',
     )
+
 
 class OrderGoodsListSerializer(serializers.Serializer):
   goods_id = serializers.CharField(
@@ -265,6 +269,7 @@ class OrderCreateSerializer(serializers.ModelSerializer):
       'id',
       'invoice',
       'order_unique',
+      'order_type',
       'supplier',
       'tontact_phone',
       'operator',
