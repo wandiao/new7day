@@ -40,6 +40,9 @@ class GoodsViewSet(viewsets.ModelViewSet):
   stock:
   商品库存
 
+  cost:
+  商品库存
+
   delete:
   删除商品
   """
@@ -52,7 +55,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
     if self.action == 'stock':
       return common_serializers.GoodsStockSerializer
     elif self.action == 'cost':
-      return common_serializers.GoodsRecordSerializer
+      return common_serializers.GoodsCostSerializer
     return common_serializers.GoodsSerializer
 
   @list_route(methods=['get'])
@@ -65,7 +68,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
 
   @list_route()
   def cost(self, request, *args, **kwargs):
-    records = models.GoodsRecord.objects.values('goods').annotate(s_mount = Sum('count'), s_price=Sum('price')).all()
+    records = models.GoodsRecord.objects.values('goods', 'goods__name').annotate(count = Sum('count'), cost=Sum('amount')).all()
     print(records)
     serializer = self.get_serializer(records, many=True)
     return Response(serializer.data)

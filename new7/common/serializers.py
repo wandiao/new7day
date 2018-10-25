@@ -135,6 +135,25 @@ class GoodsStockSerializer(serializers.ModelSerializer):
       'stock_status',
     )
 
+class GoodsCostSerializer(serializers.Serializer):
+  goods = serializers.CharField(
+    max_length=20,
+    help_text=u'商品id',
+  )
+  goods__name = serializers.CharField(
+    max_length=20,
+    help_text=u'商品名称',
+  )
+  count = serializers.IntegerField(
+    help_text=u'数量',
+  )
+  cost = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    help_text=u'成本',
+  )
+
 
 
 class GoodsRecordSerializer(serializers.ModelSerializer):
