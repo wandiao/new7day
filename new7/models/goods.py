@@ -102,9 +102,9 @@ class Goods(BaseModel):
     @property
     def stock_status(self):
         if self.stock > 10:
-          return 'normal'
+          return 1
         else:
-          return 'warn'
+          return 0
 
 
     def __str__(self):

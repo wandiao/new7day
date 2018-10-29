@@ -68,7 +68,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
   def stock(self, request, *args, **kwargs):
     pagination_class = Pagination
     paginator = pagination_class()
-    goods = paginator.paginate_queryset(self.filter_queryset(self.queryset.all()), request)
+    goods = sorted(paginator.paginate_queryset(self.filter_queryset(self.queryset.all()), request), key=lambda t: t.stock_status)
     serializer = self.get_serializer(goods, many=True)
     return paginator.get_paginated_response(serializer.data)
 
