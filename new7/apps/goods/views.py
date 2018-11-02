@@ -66,17 +66,25 @@ class GoodsViewSet(viewsets.ModelViewSet):
 
   @list_route(methods=['get'])
   def stock(self, request, *args, **kwargs):
+    depot = request.GET.get('depot', '')
+    stock_status = request.GET.get('stock_status', '')
     pagination_class = Pagination
     paginator = pagination_class()
-    goods = sorted(paginator.paginate_queryset(self.filter_queryset(self.queryset.all()), request), key=lambda t: t.stock_status)
-    serializer = self.get_serializer(goods, many=True)
+    goods_list = paginator.paginate_queryset(self.filter_queryset(self.queryset.order_by('stock_status').all()), request)
+    for goods in goods_list:
+      current_depot_stock = models.GoodsRecord.objects.filter(
+        record_depot=depot,
+        record_type='depot_in',
+        goods=goods['id']
+      ).values('goods').annotate(current_stock = Sum('count') - Sum('leave_count')).first().get('current_stock')
+      goods['current_stock'] = current_depot_stock
+    serializer = self.get_serializer(goods_list, many=True)
     return paginator.get_paginated_response(serializer.data)
 
   @swagger_auto_schema(method='get', manual_parameters=[
     openapi.Parameter('start_time', openapi.IN_QUERY, description="开始时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
     openapi.Parameter('end_time', openapi.IN_QUERY, description="结束时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
     openapi.Parameter('depot', openapi.IN_QUERY, description="库房", type=openapi.TYPE_STRING),
-    
   ])
   @list_route(methods=['get'])
   def cost(self, request, *args, **kwargs):

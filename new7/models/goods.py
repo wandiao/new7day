@@ -8,6 +8,12 @@ class Goods(BaseModel):
     '''
     商品
     '''
+
+    OPERATE_TYPE = (
+        ('depot_in', u'入库'),
+        ('depot_out', u'出库'),
+    )
+
     name = models.CharField(
         u'商品名称',
         max_length=100,
@@ -20,7 +26,6 @@ class Goods(BaseModel):
         u'商品简称',
         max_length=100,
         null=True,
-        blank=True,
         help_text=u'商品简称',
     )
 
@@ -47,18 +52,18 @@ class Goods(BaseModel):
         blank=True,
         help_text=u'品牌',
     )
-    in_price = models.CharField(
+    in_price = models.DecimalField(
         u'商品进价',
-        max_length=100,
-        null=True,
-        blank=True,
+        default=0,
+        max_digits=10,
+        decimal_places=2,
         help_text=u'商品进价',
     )
-    sale_price = models.CharField(
+    sale_price = models.DecimalField(
         u'商品售价',
-        max_length=100,
-        null=True,
-        blank=True,
+        default=0,
+        max_digits=10,
+        decimal_places=2,
         help_text=u'商品售价',
     )
 
@@ -66,6 +71,30 @@ class Goods(BaseModel):
       u'库存',
       default=0,
       help_text=u'库存'
+    )
+
+    last_operator = models.ForeignKey(
+        'new7.Profile',
+        verbose_name=u'最近操作人',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'最近操作人',
+    )
+
+    last_operate_type = models.CharField(
+        u'最近操作类型',
+        null=True,
+        max_length=20,
+        choices=OPERATE_TYPE,
+        help_text=u'最近操作类型',
+    )
+
+    last_operate_time = models.DateTimeField(
+        u'上次操作时间',
+        blank=True,
+        null=True,
+        help_text=u'上次操作时间',
     )
 
     unit = models.CharField(
@@ -99,12 +128,18 @@ class Goods(BaseModel):
         help_text=u'是否预定',
     )
 
-    @property
-    def stock_status(self):
-        if self.stock > 10:
-          return 1
+    stock_status = models.IntegerField(
+      u'库存状态',
+      default=1,
+      help_text=u'库存状态'
+    )
+
+    def save(self, *args, **kwargs):
+        if self.stock < 10:
+            self.stock_status = 0
         else:
-          return 0
+            self.stock_status = 1
+        super().save(*args, **kwargs)
 
 
     def __str__(self):
@@ -135,7 +170,7 @@ class GoodsRecord(BaseModel):
 
     record_type = models.CharField(
         u'记录类型',
-        default='main',
+        default='depot_in',
         max_length=20,
         choices=OPERATE_TYPE,
         help_text=u'操作类型',
@@ -154,6 +189,12 @@ class GoodsRecord(BaseModel):
       u'数量',
       default=0,
       help_text=u'数量'
+    )
+
+    leave_count = models.IntegerField(
+      u'出库数量',
+      default=0,
+      help_text=u'出库数量'
     )
 
     price = models.FloatField(
@@ -215,7 +256,6 @@ class GoodsRecord(BaseModel):
         max_digits=10,
         decimal_places=2,
         help_text=u'成本',
-
     )
 
     def save(self, *args, **kwargs):

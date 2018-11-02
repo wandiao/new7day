@@ -97,6 +97,11 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
         return value
 
 class GoodsSerializer(serializers.ModelSerializer):
+  last_operator_name = serializers.CharField(
+    source='last_operator.name',
+    read_only=True,
+    help_text=u'上次操作人姓名',
+  )
   class Meta:
     model = models.Goods
     fields = (
@@ -113,9 +118,22 @@ class GoodsSerializer(serializers.ModelSerializer):
       'spec',
       'desc',
       'is_book',
+      'last_operator',
+      'last_operator_name',
+      'last_operate_type',
+      'last_operate_time',
     )
 
 class GoodsStockSerializer(serializers.ModelSerializer):
+  last_operator_name = serializers.CharField(
+    source='last_operator.name',
+    read_only=True,
+    help_text=u'上次操作人姓名',
+  )
+  current_depot_stock = serializers.IntegerField(
+    default=0,
+    help_text=u'当前仓库库存',
+  )
   class Meta:
     model = models.Goods
     fields = (
@@ -133,6 +151,11 @@ class GoodsStockSerializer(serializers.ModelSerializer):
       'desc',
       'is_book',
       'stock_status',
+      'last_operator',
+      'last_operator_name',
+      'last_operate_type',
+      'last_operate_time',
+      'current_depot_stock',
     )
 
 class GoodsCostSerializer(serializers.Serializer):

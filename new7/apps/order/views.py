@@ -90,7 +90,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         stock = instance.stock - goods['count']
       
       goods_serializer = common_serializers.GoodsSerializer(instance, data={
-        'stock': stock
+        'stock': stock,
+        'last_operator': operator.id,
+        'last_operate_time': operate_time,
+        'last_operate_type': req_data.get('order_type', 'depot_in'),
       })
       goods_serializer.is_valid(raise_exception=True)
       goods_serializer.save()
