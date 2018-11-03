@@ -66,18 +66,25 @@ class GoodsViewSet(viewsets.ModelViewSet):
 
   @list_route(methods=['get'])
   def stock(self, request, *args, **kwargs):
-    depot = request.GET.get('depot', '')
+    depot = request.GET.get('depot', None)
     stock_status = request.GET.get('stock_status', '')
     pagination_class = Pagination
     paginator = pagination_class()
     goods_list = paginator.paginate_queryset(self.filter_queryset(self.queryset.order_by('stock_status').all()), request)
     for goods in goods_list:
+      print(goods.id)
       current_depot_stock = models.GoodsRecord.objects.filter(
         record_depot=depot,
         record_type='depot_in',
-        goods=goods['id']
-      ).values('goods').annotate(current_stock = Sum('count') - Sum('leave_count')).first().get('current_stock')
-      goods['current_stock'] = current_depot_stock
+        goods=goods.id,
+      ).aggregate(current_count = Sum('count'), current_leave_count = Sum('leave_count'))
+      if current_depot_stock['current_count'] != None:
+        current_count = current_depot_stock['current_count'] - current_depot_stock['current_leave_count']
+        print(current_count)
+      else:
+        current_count = 0
+      
+      goods.current_depot_stock = current_count
     serializer = self.get_serializer(goods_list, many=True)
     return paginator.get_paginated_response(serializer.data)
 

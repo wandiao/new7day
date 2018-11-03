@@ -122,6 +122,7 @@ class GoodsSerializer(serializers.ModelSerializer):
       'last_operator_name',
       'last_operate_type',
       'last_operate_time',
+      'last_price',
     )
 
 class GoodsStockSerializer(serializers.ModelSerializer):
@@ -155,6 +156,7 @@ class GoodsStockSerializer(serializers.ModelSerializer):
       'last_operator_name',
       'last_operate_type',
       'last_operate_time',
+      'last_price',
       'current_depot_stock',
     )
 
@@ -195,6 +197,7 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
       'order',
       'goods_name',
       'count',
+      'leave_count',
       'unit',
       'price',
       'record_type',
@@ -222,7 +225,14 @@ class OrderGoodsListSerializer(serializers.Serializer):
   )
   unit = serializers.CharField(
     max_length=20,
+    required=False,
     help_text=u'单位',
+  )
+
+  operate_depot = serializers.CharField(
+    max_length=20,
+    required=True,
+    help_text=u'操作仓库',
   )
 
 class OrderGoodsSerializer(serializers.ModelSerializer):
@@ -234,6 +244,7 @@ class OrderGoodsSerializer(serializers.ModelSerializer):
       'count',
       'price',
       'unit',
+      'operate_depot',
     )
 
 class OrderGoodsDetailSerializer(serializers.ModelSerializer):
@@ -241,6 +252,10 @@ class OrderGoodsDetailSerializer(serializers.ModelSerializer):
     many=False,
     help_text=u'订单商品',
     read_only=True
+  )
+  operate_depot_name = serializers.CharField(
+    source='operate_depot.name',
+    read_only=True,
   )
   class Meta:
     model = models.OrderGoods
@@ -250,6 +265,8 @@ class OrderGoodsDetailSerializer(serializers.ModelSerializer):
       'count',
       'price',
       'unit',
+      'operate_depot',
+      'operate_depot_name',
     )
 
 
@@ -287,14 +304,14 @@ class OrderSerializer(serializers.ModelSerializer):
       'trade_no',
       'is_refond',
       'depot',
-      'code',
-      'brand',
-      'specification',
-      'unit',
-      'price',
+      # 'code',
+      # 'brand',
+      # 'specification',
+      # 'unit',
+      # 'price',
       'total_price',
-      'production_date',
-      'expired_date',
+      # 'production_date',
+      # 'expired_date',
       'remark',
       'order_goods',
     )
@@ -328,14 +345,14 @@ class OrderCreateSerializer(serializers.ModelSerializer):
       'trade_no',
       'is_refond',
       'depot',
-      'code',
-      'brand',
-      'specification',
-      'unit',
-      'price',
+      # 'code',
+      # 'brand',
+      # 'specification',
+      # 'unit',
+      # 'price',
       'total_price',
-      'production_date',
-      'expired_date',
+      # 'production_date',
+      # 'expired_date',
       'remark',
       'goods_info',
     )

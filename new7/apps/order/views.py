@@ -68,6 +68,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         price=goods.get('price', 0),
         unit=goods.get('unit', 0),
         order=order_data.id,
+        operate_depot = goods.get('operate_depot', None),
       )
       record_data = dict(
         record_type=req_data.get('order_type', 'depot_in'),
@@ -75,10 +76,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         order=order_data.id,
         goods=goods['goods_id'],
         operator_account=operator.phone,
-        record_depot=req_data.get('depot', None),
+        record_depot=goods.get('operate_depot', None),
         remarks=req_data.get('remarks', ''),
-        price=goods.get('price', 0),
-        unit=goods.get('unit', 0),
+        price=goods.get('price', None),
+        unit=goods.get('unit', None),
       )
       device_record = common_serializers.GoodsRecordSerializer(data=record_data)
       device_record.is_valid(raise_exception=True)
@@ -94,6 +95,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         'last_operator': operator.id,
         'last_operate_time': operate_time,
         'last_operate_type': req_data.get('order_type', 'depot_in'),
+        'last_price': goods.get('price', 0),
       })
       goods_serializer.is_valid(raise_exception=True)
       goods_serializer.save()

@@ -104,42 +104,42 @@ class Order(BaseModel):
         help_text=u'仓库',
     )
 
-    code = models.CharField(
-        u'编号',
-        max_length=200,
-        null=True,
-        blank=True,
-        help_text=u'编号',
-    )
+    # code = models.CharField(
+    #     u'编号',
+    #     max_length=200,
+    #     null=True,
+    #     blank=True,
+    #     help_text=u'编号',
+    # )
 
-    brand = models.CharField(
-        u'品名',
-        max_length=200,
-        null=True,
-        blank=True,
-        help_text=u'品名',
-    )
-    specification = models.CharField(
-        u'规格',
-        max_length=200,
-        null=True,
-        blank=True,
-        help_text=u'规格',
-    )
-    unit = models.CharField(
-        u'单位',
-        max_length=200,
-        null=True,
-        blank=True,
-        help_text=u'单位',
-    )
-    price = models.CharField(
-        u'单价',
-        max_length=200,
-        null=True,
-        blank=True,
-        help_text=u'单价',
-    )
+    # brand = models.CharField(
+    #     u'品名',
+    #     max_length=200,
+    #     null=True,
+    #     blank=True,
+    #     help_text=u'品名',
+    # )
+    # specification = models.CharField(
+    #     u'规格',
+    #     max_length=200,
+    #     null=True,
+    #     blank=True,
+    #     help_text=u'规格',
+    # )
+    # unit = models.CharField(
+    #     u'单位',
+    #     max_length=200,
+    #     null=True,
+    #     blank=True,
+    #     help_text=u'单位',
+    # )
+    # price = models.CharField(
+    #     u'单价',
+    #     max_length=200,
+    #     null=True,
+    #     blank=True,
+    #     help_text=u'单价',
+    # )
     total_price = models.CharField(
         u'金额',
         max_length=200,
@@ -168,18 +168,18 @@ class Order(BaseModel):
         blank=True,
         help_text=u'是否支付',
     )
-    production_date = models.DateTimeField(
-        u'生产日期',
-        blank=True,
-        null=True,
-        help_text=u'生产日期',
-    )
-    expired_date = models.DateTimeField(
-        u'有效期',
-        blank=True,
-        null=True,
-        help_text=u'有效期',
-    )
+    # production_date = models.DateTimeField(
+    #     u'生产日期',
+    #     blank=True,
+    #     null=True,
+    #     help_text=u'生产日期',
+    # )
+    # expired_date = models.DateTimeField(
+    #     u'有效期',
+    #     blank=True,
+    #     null=True,
+    #     help_text=u'有效期',
+    # )
     remark = models.CharField(
         u'备注',
         max_length=500,
@@ -217,7 +217,6 @@ class Order(BaseModel):
         blank=True,
         help_text=u'是否退款',
     )
-
     def __str__(self):
         return self.invoice
 
@@ -253,10 +252,11 @@ class OrderGoods(BaseModel):
       help_text=u'数量'
     )
 
-    price = models.FloatField(
+    price =models.DecimalField(
         u'价格',
-        blank=True,
-        null=True,
+        default=0,
+        max_digits=10,
+        decimal_places=2,
         help_text=u'价格',
     )
 
@@ -266,6 +266,15 @@ class OrderGoods(BaseModel):
         null=True,
         blank=True,
         help_text=u'单位',
+    )
+
+    operate_depot = models.ForeignKey(
+        'new7.Depot',
+        verbose_name=u'操作仓库',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'操作仓库',
     )
 
 

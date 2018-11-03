@@ -97,6 +97,14 @@ class Goods(BaseModel):
         help_text=u'上次操作时间',
     )
 
+    last_price =  models.DecimalField(
+        u'上次价格',
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        help_text=u'上次价格',
+    )
+
     unit = models.CharField(
         u'单位',
         max_length=100,
