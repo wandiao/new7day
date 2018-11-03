@@ -140,12 +140,17 @@ class Order(BaseModel):
     #     blank=True,
     #     help_text=u'单价',
     # )
-    total_price = models.CharField(
-        u'金额',
-        max_length=200,
-        null=True,
-        blank=True,
-        help_text=u'金额',
+    total_price = models.DecimalField(
+        u'总金额',
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        help_text=u'总金额',
+    )
+    total_count = models.IntegerField(
+      u'总数量',
+      default=0,
+      help_text=u'总数量'
     )
     pay_type = models.CharField(
         u'支付方式',
@@ -217,6 +222,7 @@ class Order(BaseModel):
         blank=True,
         help_text=u'是否退款',
     )
+
     def __str__(self):
         return self.invoice
 

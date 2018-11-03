@@ -44,6 +44,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     DocParam('order_unique', description='流水号', location='form'),
     DocParam('order_goods', description='商品信息列表', location='form', type='array'),
   ])
+  ordering = ('-create_time',)
 
   def get_serializer_class(self):
     if self.action == 'new':
@@ -58,9 +59,17 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer.is_valid(raise_exception=True)
     req_data = serializer.validated_data
     goods_info = req_data['goods_info']
+    total_count = 0
+    total_price = 0
+    for goods in goods_info:
+      total_count += goods['count']
+      total_price += goods['count']* goods['price']
+    req_data['total_count'] = total_count
+    req_data['total_price'] = total_price
     operator = self.request.user.profile
     operate_time = datetime.datetime.now()
     order_data = serializer.save()
+    total_count = 0
     for goods in goods_info:
       data = dict(
         goods=goods['goods_id'],

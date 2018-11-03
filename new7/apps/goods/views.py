@@ -130,4 +130,5 @@ class GoodsRecordViewSet(viewsets.ModelViewSet):
   queryset = models.GoodsRecord.objects.all()
   serializer_class = common_serializers.GoodsRecordSerializer
   filter_class = filters.GoodsRecordFilterSet
+  ordering = ('-record_time',)
 
