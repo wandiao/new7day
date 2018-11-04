@@ -72,12 +72,17 @@ class GoodsViewSet(viewsets.ModelViewSet):
     paginator = pagination_class()
     goods_list = paginator.paginate_queryset(self.filter_queryset(self.queryset.order_by('stock_status').all()), request)
     for goods in goods_list:
-      print(goods.id)
-      current_depot_stock = models.GoodsRecord.objects.filter(
-        record_depot=depot,
-        record_type='depot_in',
-        goods=goods.id,
-      ).aggregate(current_count = Sum('count'), current_leave_count = Sum('leave_count'))
+      if depot:
+        current_depot_stock = models.GoodsRecord.objects.filter(
+          record_depot=depot,
+          record_type='depot_in',
+          goods=goods.id,
+        ).aggregate(current_count = Sum('count'), current_leave_count = Sum('leave_count'))
+      else:
+        current_depot_stock = models.GoodsRecord.objects.filter(
+          record_type='depot_in',
+          goods=goods.id,
+        ).aggregate(current_count = Sum('count'), current_leave_count = Sum('leave_count'))
       if current_depot_stock['current_count'] != None:
         current_count = current_depot_stock['current_count'] - current_depot_stock['current_leave_count']
         print(current_count)
