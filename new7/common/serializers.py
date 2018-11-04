@@ -125,6 +125,7 @@ class GoodsSerializer(serializers.ModelSerializer):
       'last_price',
     )
 
+# 库存
 class GoodsStockSerializer(serializers.ModelSerializer):
   last_operator_name = serializers.CharField(
     source='last_operator.name',
@@ -160,6 +161,7 @@ class GoodsStockSerializer(serializers.ModelSerializer):
       'current_depot_stock',
     )
 
+# 成本
 class GoodsCostSerializer(serializers.Serializer):
   goods = serializers.CharField(
     max_length=20,
@@ -170,14 +172,27 @@ class GoodsCostSerializer(serializers.Serializer):
     help_text=u'商品名称',
   )
   count = serializers.IntegerField(
-    help_text=u'数量',
+    help_text=u'进货数量',
   )
   cost = serializers.DecimalField(
     max_digits=10,
     decimal_places=2,
     default=0,
-    help_text=u'成本',
+    help_text=u'进货成本',
   )
+
+  used_count = serializers.IntegerField(
+    help_text=u'使用数量',
+  )
+
+  used_cost = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    help_text=u'使用成本',
+  )
+
+  
 
 
 

@@ -2,9 +2,14 @@
 from __future__ import unicode_literals
 
 import datetime
-from rest_framework import viewsets, status
+from rest_framework import (
+  viewsets,
+  status,
+  serializers as rest_serializers,
+  )
 from rest_framework.decorators import list_route, detail_route
 from django.db.transaction import atomic
+from django.db.models import F
 from rest_framework.response import Response
 
 from new7 import models
@@ -83,6 +88,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         record_type=req_data.get('order_type', 'depot_in'),
         record_time=operate_time,
         order=order_data.id,
+        count=goods['count'],
         goods=goods['goods_id'],
         operator_account=operator.phone,
         record_depot=goods.get('operate_depot', None),
@@ -90,15 +96,46 @@ class OrderViewSet(viewsets.ModelViewSet):
         price=goods.get('price', None),
         unit=goods.get('unit', None),
       )
-      device_record = common_serializers.GoodsRecordSerializer(data=record_data)
-      device_record.is_valid(raise_exception=True)
-      device_record.save()
       instance = models.Goods.objects.get(pk=goods['goods_id'])
+      amount = 0
       if req_data['order_type'] == 'depot_in':
         stock = instance.stock + goods['count']
+        amount = goods['count'] * goods['price']
       elif req_data['order_type'] == 'depot_out':
+        if instance.stock - goods['count'] < 0:
+          raise rest_serializers.ValidationError({
+            'error': u'%s库存不足' % instance.name,
+          })
+        tmp_count = goods['count']
+        while (tmp_count > 0):
+          # 取出含有剩余量的第一条数据
+          current = models.GoodsRecord.objects.filter(
+            record_type='depot_in',
+            goods = goods['goods_id'],
+            count__gt=F('leave_count'),
+            record_depot=goods.get('operate_depot', None),
+          ).order_by('record_time').first()
+          if current:
+            spare = current.count - current.leave_count
+            if tmp_count <= spare:
+              current.leave_count = current.leave_count + tmp_count
+              current.save()
+              amount += current.price * tmp_count
+              tmp_count = 0
+            else:
+              current.leave_count = current.count
+              current.save()
+              amount += current.price * spare
+              tmp_count = tmp_count - spare
+          else:
+            raise rest_serializers.ValidationError({
+              'error': u'%s库存不足' % instance.name,
+            })  
         stock = instance.stock - goods['count']
-      
+      record_data['amount'] = amount
+      goods_record = common_serializers.GoodsRecordSerializer(data=record_data)
+      goods_record.is_valid(raise_exception=True)
+      goods_record.save()
       goods_serializer = common_serializers.GoodsSerializer(instance, data={
         'stock': stock,
         'last_operator': operator.id,

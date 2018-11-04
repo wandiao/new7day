@@ -113,7 +113,11 @@ class GoodsViewSet(viewsets.ModelViewSet):
       )
     if depot:
       queryset = queryset.filter(record_depot=depot)
-    records = queryset.values('goods', 'goods__name').annotate(count = Sum('count'), cost=Sum('amount'))
+    records = queryset.filter(record_type='depot_in').values('goods', 'goods__name').annotate(count = Sum('count'), cost=Sum('amount'))
+    for record in records:
+      out_record = queryset.filter(record_type='depot_out', goods=record['goods']).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
+      record['used_count'] = out_record['used_count']
+      record['used_cost'] = out_record['used_cost']
     serializer = self.get_serializer(records, many=True)
     return Response(serializer.data)
 

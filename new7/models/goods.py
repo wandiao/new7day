@@ -266,9 +266,10 @@ class GoodsRecord(BaseModel):
         help_text=u'成本',
     )
 
-    def save(self, *args, **kwargs):
-        self.amount = self.price * self.count
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.amount:
+    #         self.amount = self.price * self.count
+    #     super().save(*args, **kwargs)
 
     def __str__(self):
         return self.create_time.strftime("%Y-%m-%d %H:%M:%S")
