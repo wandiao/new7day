@@ -29,7 +29,7 @@ class LoginSerializer(JSONWebTokenSerializer):
       return user
     try:
       profile = self.user_profile_model.objects.get(
-        phone=username_field_value,
+        code=username_field_value,
         deleted=False,
       )
       credentials[self.username_field] = profile.user.username
