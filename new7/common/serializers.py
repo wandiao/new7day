@@ -192,6 +192,32 @@ class GoodsCostSerializer(serializers.Serializer):
     help_text=u'使用成本',
   )
 
+# 成本统计
+class  GoodsStatsSerializer(serializers.Serializer):
+  month = serializers.IntegerField(
+    help_text=u'月份',
+  )
+  count = serializers.IntegerField(
+    help_text=u'进货数量',
+  )
+  cost = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    help_text=u'进货成本',
+  )
+
+  used_count = serializers.IntegerField(
+    help_text=u'使用数量',
+  )
+
+  used_cost = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    help_text=u'使用成本',
+  )
+
   
 
 

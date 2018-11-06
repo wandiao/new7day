@@ -49,6 +49,9 @@ class GoodsViewSet(viewsets.ModelViewSet):
   cost:
   商品成本
 
+  stats:
+  成本月度统计
+
   delete:
   删除商品
   """
@@ -62,6 +65,8 @@ class GoodsViewSet(viewsets.ModelViewSet):
       return common_serializers.GoodsStockSerializer
     elif self.action == 'cost':
       return common_serializers.GoodsCostSerializer
+    elif self.action == 'stats':
+      return common_serializers.GoodsStatsSerializer
     return common_serializers.GoodsSerializer
 
   @list_route(methods=['get'])
@@ -125,6 +130,40 @@ class GoodsViewSet(viewsets.ModelViewSet):
       record['used_cost'] = out_record['used_cost']
     serializer = self.get_serializer(records, many=True)
     return Response(serializer.data)
+  
+  @list_route(methods=['get'])
+  def stats(self, request, *args, **kwargs):
+    depot = self.request.GET.get('depot', '')
+    queryset = models.GoodsRecord.objects.all()
+    if depot:
+      queryset = queryset.filter(record_depot=depot)
+    res = []
+    for n in range (1, 13):
+      current = queryset.filter(
+        record_time__month=n,
+        record_type='depot_in',
+      ).aggregate(count = Sum('count'), cost=Sum('amount'))
+      print(current)
+      used_current = queryset.filter(
+        record_time__month=n,
+        record_type='depot_out',
+      ).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
+      month_data = dict(
+        month=n,
+        count=current.get('count', 0),
+        cost=current.get('cost', 0),
+        used_count=used_current.get('used_count', 0),
+        used_cost=used_current.get('used_cost', 0),
+      )
+      res.append(month_data)
+    stats_data = self.get_serializer(res, many=True)
+
+    return Response(stats_data.data)
+    
+
+
+
+
 
 
 
