@@ -38,7 +38,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     delete:
     删除账户
     """
-    queryset = models.Profile.objects.filter(deleted=False)
+    queryset = models.Profile.objects.exclude(user=1).filter(deleted=False)
     serializer_class = common_serializers.ProfileSerializer
     search_fields = ('name', 'phone')
     filter_class = filters.ProfileFilterSet
