@@ -240,6 +240,7 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
       'count',
       'leave_count',
       'unit',
+      'spec',
       'price',
       'record_type',
       'record_depot',
@@ -268,6 +269,12 @@ class OrderGoodsListSerializer(serializers.Serializer):
     max_length=20,
     required=False,
     help_text=u'单位',
+  )
+
+  spec = serializers.CharField(
+    max_length=20,
+    required=False,
+    help_text=u'规格',
   )
 
   operate_depot = serializers.CharField(

@@ -76,11 +76,13 @@ class OrderViewSet(viewsets.ModelViewSet):
     order_data = serializer.save()
     total_count = 0
     for goods in goods_info:
+      instance = models.Goods.objects.get(pk=goods['goods_id'])
       data = dict(
         goods=goods['goods_id'],
         count=goods['count'],
         price=goods.get('price', 0),
-        unit=goods.get('unit', 0),
+        unit=goods.get('unit', instance.unit),
+        spec=goods.get('spec', instance.spec),
         order=order_data.id,
         operate_depot = goods.get('operate_depot', None),
       )
@@ -93,10 +95,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         operator_account=operator.phone,
         record_depot=goods.get('operate_depot', None),
         remarks=req_data.get('remarks', ''),
-        price=goods.get('price', None),
-        unit=goods.get('unit', None),
+        unit=goods.get('unit', instance.unit),
+        spec=goods.get('spec', instance.spec),
       )
-      instance = models.Goods.objects.get(pk=goods['goods_id'])
       amount = 0
       if req_data['order_type'] == 'depot_in':
         stock = instance.stock + goods['count']

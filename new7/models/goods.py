@@ -266,6 +266,14 @@ class GoodsRecord(BaseModel):
         help_text=u'成本',
     )
 
+    spec = models.CharField(
+        u'规格',
+        max_length=100,
+        null=True,
+        blank=True,
+        help_text=u'规格',
+    )
+
     # def save(self, *args, **kwargs):
     #     if not self.amount:
     #         self.amount = self.price * self.count
