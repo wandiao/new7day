@@ -181,6 +181,18 @@ class GoodsCostSerializer(serializers.Serializer):
     help_text=u'进货成本',
   )
 
+  unit = serializers.CharField(
+    max_length=20,
+    required=False,
+    help_text=u'单位',
+  )
+
+  spec = serializers.CharField(
+    max_length=20,
+    required=False,
+    help_text=u'规格',
+  )
+
   used_count = serializers.IntegerField(
     help_text=u'使用数量',
   )

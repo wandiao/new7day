@@ -7,6 +7,8 @@ from django.db.models import Sum
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
+from collections import OrderedDict
+
 from new7 import models
 from new7.common import serializers as common_serializers
 from new7.common.schema import auto_schema, DocParam
@@ -109,6 +111,8 @@ class GoodsViewSet(viewsets.ModelViewSet):
     start_time = self.request.GET.get('start_time', None)
     end_time = self.request.GET.get('end_time', None)
     depot = self.request.GET.get('depot', '')
+    page = int(self.request.GET.get('page', 1))
+    page_size = int(self.request.GET.get('page_size', 50))
     end_time = datetime.datetime.strptime(
                 end_time, '%Y-%m-%d') if end_time else datetime.datetime.now()
     if start_time:
@@ -123,20 +127,33 @@ class GoodsViewSet(viewsets.ModelViewSet):
       )
     if depot:
       queryset = queryset.filter(record_depot=depot)
-    records = queryset.filter(record_type='depot_in').values('goods', 'goods__name').annotate(count = Sum('count'), cost=Sum('amount'))
+    records = queryset.filter(record_type='depot_in').values('goods', 'goods__name', 'unit', 'spec').annotate(count = Sum('count'), cost=Sum('amount'))
     for record in records:
       out_record = queryset.filter(record_type='depot_out', goods=record['goods']).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
       record['used_count'] = out_record['used_count']
       record['used_cost'] = out_record['used_cost']
-    serializer = self.get_serializer(records, many=True)
-    return Response(serializer.data)
+    serializer = self.get_serializer(records[(page - 1)*page_size:page*page_size], many=True)
+    return Response(OrderedDict([
+      ('count', records.count()),
+      ('page_size', page_size),
+      ('total_page', int((records.count() + page_size - 1)/page_size)),
+      ('current_page', page),
+      ('resluts', serializer.data)
+    ]))
   
+  @swagger_auto_schema(method='get', manual_parameters=[
+    openapi.Parameter('depot', openapi.IN_QUERY, description="仓库", type=openapi.TYPE_STRING),
+    openapi.Parameter('goods_id', openapi.IN_QUERY, description="商品id", type=openapi.TYPE_STRING),
+  ])
   @list_route(methods=['get'])
   def stats(self, request, *args, **kwargs):
-    depot = self.request.GET.get('depot', '')
+    depot = self.request.GET.get('depot', None)
+    goods_id = self.request.GET.get('goods_id', None)
     queryset = models.GoodsRecord.objects.all()
     if depot:
       queryset = queryset.filter(record_depot=depot)
+    if goods_id:
+      queryset = queryset.filter(goods=goods_id)
     res = []
     for n in range (1, 13):
       current = queryset.filter(
