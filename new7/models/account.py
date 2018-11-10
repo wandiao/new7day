@@ -17,6 +17,7 @@ from .base import (
 
 class Profile(DeletedMixin, BaseModel):
   ROLE_CHOICES = (
+    ('boss', u'老板'),
     ('super_admin', u'超级管理员'),
     ('admin', u'管理员'),
     ('worker', u'业务员'),
