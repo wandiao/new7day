@@ -171,8 +171,6 @@ class GoodsRecord(BaseModel):
         'new7.Goods',
         verbose_name=u'商品',
         on_delete=models.PROTECT,
-        null=True,
-        blank=True,
         help_text=u'商品',
     )
 
@@ -285,5 +283,64 @@ class GoodsRecord(BaseModel):
     class Meta:
         verbose_name = u'商品记录'
         verbose_name_plural = verbose_name
+
+class GoodsDamaged(BaseModel):
+    goods =  models.ForeignKey(
+        'new7.Goods',
+        verbose_name=u'商品',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text=u'商品',
+    )
+
+    count = models.IntegerField(
+      u'数量',
+      help_text=u'数量'
+    )
+
+    price = models.FloatField(
+        u'价格',
+        help_text=u'价格',
+    )
+
+    amount = models.DecimalField(
+        u'损失成本',
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        help_text=u'损失成本',
+    )
+
+    damaged_depot = models.ForeignKey(
+        'new7.Depot',
+        verbose_name=u'所属仓库',
+        null=False,
+        on_delete=models.PROTECT,
+        help_text=u'所属仓库',
+    )
+
+    report_time = models.DateTimeField(
+        u'上报时间',
+        blank=True,
+        null=True,
+        help_text=u'上报时间',
+    )
+
+    remarks = models.TextField(
+        u'备注',
+        blank=True,
+        default='',
+        help_text=u'备注',
+    )
+
+    operator = models.ForeignKey(
+        'new7.Profile',
+        verbose_name=u'操作人员',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'操作人员',
+    )
+
 
     

@@ -26,3 +26,15 @@ class GoodsRecordFilterSet(django_filters.FilterSet):
             'record_depot',
             'record_type',
         )
+
+
+class GoodsDamagedFilterSet(django_filters.FilterSet):
+    goods_id = django_filters.CharFilter(
+        field_name='goods',
+    )
+    class Meta:
+        model = models.GoodsDamaged
+        fields = (
+            'goods_id',
+            'damaged_depot',
+        )

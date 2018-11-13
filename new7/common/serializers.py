@@ -204,6 +204,17 @@ class GoodsCostSerializer(serializers.Serializer):
     help_text=u'使用成本',
   )
 
+  damaged_count = serializers.IntegerField(
+    help_text=u'报损数量',
+  )
+
+  damaged_cost = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    help_text=u'报损成本',
+  )
+
 # 成本统计
 class  GoodsStatsSerializer(serializers.Serializer):
   month = serializers.IntegerField(
@@ -228,6 +239,17 @@ class  GoodsStatsSerializer(serializers.Serializer):
     decimal_places=2,
     default=0,
     help_text=u'使用成本',
+  )
+
+  damaged_count = serializers.IntegerField(
+    help_text=u'报损数量',
+  )
+
+  damaged_cost = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    help_text=u'报损成本',
   )
 
   
@@ -260,6 +282,35 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
       'record_time',
       'record_source',
       'operator_account',
+      'remarks',
+      'amount',
+    )
+
+class GoodsDamagedSerializer(serializers.ModelSerializer):
+  goods_name = serializers.CharField(
+    source='goods.name',
+    read_only=True
+  )
+  damaged_depot_name = serializers.CharField(
+    source='damaged_depot.name',
+    read_only=True
+  )
+  operator_name = serializers.CharField(
+    source='operator.name',
+    read_only=True
+  )
+  class Meta:
+    model = models.GoodsDamaged
+    fields = (
+      'goods',
+      'goods_name',
+      'count',
+      'price',
+      'damaged_depot',
+      'damaged_depot_name',
+      'report_time',
+      'operator',
+      'operator_name',
       'remarks',
       'amount',
     )

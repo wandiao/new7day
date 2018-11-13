@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 import datetime
 from rest_framework import viewsets
-from django.db.models import Sum
+from django.db.models import Sum, F
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
@@ -110,6 +110,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
     queryset = models.GoodsRecord.objects.all()
     start_time = self.request.GET.get('start_time', None)
     end_time = self.request.GET.get('end_time', None)
+    damaged_queryset = models.GoodsDamaged.objects.all()
     depot = self.request.GET.get('depot', '')
     page = int(self.request.GET.get('page', 1))
     page_size = int(self.request.GET.get('page_size', 50))
@@ -121,17 +122,27 @@ class GoodsViewSet(viewsets.ModelViewSet):
         record_time__gte=start_time,
         record_time__lte=end_time,
       )
+      damaged_queryset = damaged_queryset.filter(
+        report_time__gte=start_time,
+        report_time__lte=end_time,
+      )
     else:
       queryset = queryset.filter(
         record_time__lte=end_time,
+      )
+      damaged_queryset = damaged_queryset.filter(
+        report_time__lte=end_time,
       )
     if depot:
       queryset = queryset.filter(record_depot=depot)
     records = queryset.filter(record_type='depot_in').values('goods', 'goods__name', 'unit', 'spec').annotate(count = Sum('count'), cost=Sum('amount'))
     for record in records:
       out_record = queryset.filter(record_type='depot_out', goods=record['goods']).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
+      damaged_record = damaged_queryset.filter(goods=record['goods']).aggregate(damaged_count = Sum('count'), damaged_cost=Sum('amount'))
       record['used_count'] = out_record['used_count']
       record['used_cost'] = out_record['used_cost']
+      record['damaged_count'] = damaged_record['damaged_count']
+      record['damaged_cost'] = damaged_record['damaged_cost']
     serializer = self.get_serializer(records[(page - 1)*page_size:page*page_size], many=True)
     return Response(OrderedDict([
       ('count', records.count()),
@@ -150,6 +161,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
     depot = self.request.GET.get('depot', None)
     goods_id = self.request.GET.get('goods_id', None)
     queryset = models.GoodsRecord.objects.all()
+    damaged_queryset = models.GoodsDamaged.objects.all()
     if depot:
       queryset = queryset.filter(record_depot=depot)
     if goods_id:
@@ -165,12 +177,17 @@ class GoodsViewSet(viewsets.ModelViewSet):
         record_time__month=n,
         record_type='depot_out',
       ).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
+      damaged_current = damaged_queryset.filter(
+        report_time__month=n,
+      ).aggregate(damaged_count = Sum('count'), damaged_cost=Sum('amount'))
       month_data = dict(
         month=n,
         count=current.get('count', 0),
         cost=current.get('cost', 0),
         used_count=used_current.get('used_count', 0),
         used_cost=used_current.get('used_cost', 0),
+        damaged_count=damaged_current.get('damaged_count', 0),
+        damaged_cost=damaged_current.get('damaged_cost', 0),
       )
       res.append(month_data)
     stats_data = self.get_serializer(res, many=True)
@@ -196,4 +213,80 @@ class GoodsRecordViewSet(viewsets.ModelViewSet):
   serializer_class = common_serializers.GoodsRecordSerializer
   filter_class = filters.GoodsRecordFilterSet
   ordering = ('-record_time',)
+
+
+class GoodsDamagedViewSet(viewsets.ModelViewSet):
+  """
+  商品报损接口
+
+  retrieve:
+  报损详情
+
+  list:
+  报损列表
+
+  create:
+  新增报损
+
+  partial_update:
+  修改报损
+
+  update:
+  修改报损
+
+  delete:
+  删除报损
+  """
+
+  
+
+  queryset = models.GoodsDamaged.objects.all()
+  serializer_class = common_serializers.GoodsDamagedSerializer
+  filter_class = filters.GoodsDamagedFilterSet
+  ordering = ('-report_time',)
+
+  def create(self, request):
+    data = request.data
+    operate_time = datetime.datetime.now()
+    operator = self.request.user.profile
+    data['amount'] = data['price'] * data['count']
+    data['operator'] = operator.id
+    data['report_time'] = operate_time
+    instance = models.Goods.objects.get(pk=data['goods'])
+    if instance.stock - data['count'] < 0:
+      raise rest_serializers.ValidationError({
+        'error': '报损数量超过库存数',
+      })
+    tmp_count = data['count']
+    while (tmp_count > 0):
+      # 取出含有剩余量的第一条数据
+      current = models.GoodsRecord.objects.filter(
+        record_type='depot_in',
+        goods = data['goods'],
+        count__gt=F('leave_count'),
+        record_depot=data['damaged_depot'],
+      ).order_by('record_time').first()
+      if current:
+        spare = current.count - current.leave_count
+        if tmp_count <= spare:
+          current.leave_count = current.leave_count + tmp_count
+          current.save()
+          tmp_count = 0
+        else:
+          current.leave_count = current.count
+          current.save()
+          tmp_count = tmp_count - spare
+      else:
+        raise rest_serializers.ValidationError({
+          'error': '报损数量超过库存数',
+        })  
+    instance.stock = instance.stock - data['count']
+    instance.save()
+    serializer = common_serializers.GoodsDamagedSerializer(data=data)
+    if serializer.is_valid():
+      serializer.save()
+      return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 
