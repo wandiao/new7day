@@ -142,8 +142,14 @@ class Goods(BaseModel):
       help_text=u'库存状态'
     )
 
+    warn_stock = models.IntegerField(
+      u'报警库存',
+      default=10,
+      help_text=u'报警库存'
+    )
+
     def save(self, *args, **kwargs):
-        if self.stock < 10:
+        if self.stock < self.warn_stock:
             self.stock_status = 0
         else:
             self.stock_status = 1
