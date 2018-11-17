@@ -13,6 +13,7 @@ from new7 import models
 from new7.common import serializers as common_serializers
 from new7.common.schema import auto_schema, DocParam
 from rest_framework.schemas import AutoSchema
+from django.core.mail import send_mail
 import coreapi
 from rest_framework.response import Response
 from rest_framework import (
@@ -191,6 +192,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
       )
       res.append(month_data)
     stats_data = self.get_serializer(res, many=True)
+
 
     return Response(stats_data.data)
     

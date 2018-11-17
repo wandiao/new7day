@@ -270,6 +270,7 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.GoodsRecord
     fields = (
+      'id',
       'goods',
       'order',
       'goods_name',
@@ -312,6 +313,7 @@ class GoodsDamagedSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.GoodsDamaged
     fields = (
+      'id',
       'goods',
       'goods_name',
       'count',
