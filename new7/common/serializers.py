@@ -293,6 +293,14 @@ class GoodsDamagedSerializer(serializers.ModelSerializer):
     source='goods.name',
     read_only=True
   )
+  goods_unit = serializers.CharField(
+    source='goods.unit',
+    read_only=True
+  )
+  goods_spec = serializers.CharField(
+    source='goods.spec',
+    read_only=True
+  )
   damaged_depot_name = serializers.CharField(
     source='damaged_depot.name',
     read_only=True
@@ -315,6 +323,8 @@ class GoodsDamagedSerializer(serializers.ModelSerializer):
       'operator_name',
       'remarks',
       'amount',
+      'goods_spec',
+      'goods_unit',
     )
 
 
