@@ -334,8 +334,7 @@ class GoodsDamaged(BaseModel):
 
     remarks = models.TextField(
         u'备注',
-        blank=True,
-        default='',
+        null=False,
         help_text=u'备注',
     )
 
