@@ -92,6 +92,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         order=order_data.id,
         count=goods['count'],
         goods=goods['goods_id'],
+        price=goods.get('price', 0),
         operator_account=operator.phone,
         record_depot=goods.get('operate_depot', None),
         remarks=req_data.get('remarks', ''),
