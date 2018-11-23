@@ -11,6 +11,9 @@ from new7.common.schema import auto_schema, DocParam
 from new7.common.utils import (
     create_user,
 )
+from rest_framework import (
+    serializers as rest_serializers
+)
 
 from . import serializers
 from . import filters
@@ -61,7 +64,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
         phone = serializer.validated_data.get('phone')
         role = serializer.validated_data.get('role')
         user = self.request.user
-        if user.profile.role != 'super_admin':
+        if user.profile.role != 'super_admin' and user.profile.role != 'boss':
             raise rest_serializers.ValidationError({
                 'error': u'账户类型有误, 不能创建',
             })
