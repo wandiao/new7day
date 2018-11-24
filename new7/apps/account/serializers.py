@@ -47,12 +47,12 @@ class ChangePasswordSerializer(serializers.Serializer):
     password = serializers.CharField(
         label=u'新密码',
         write_only=True,
-        min_length=8,
+        min_length=6,
     )
     confirm_password = serializers.CharField(
         label=u'确认密码',
         write_only=True,
-        min_length=8,
+        min_length=6,
     )
 
     def validate_old_password(self, old_password):

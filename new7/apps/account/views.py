@@ -4,6 +4,14 @@ from rest_framework import (
     viewsets,
     mixins,
 )
+from django.contrib.auth import logout
+
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.views import APIView
+from rest_framework.schemas import AutoSchema
+from rest_framework.decorators import list_route
+
 
 from new7 import models
 from new7.common import serializers as common_serializers
@@ -14,10 +22,15 @@ from new7.common.utils import (
 from rest_framework import (
     serializers as rest_serializers
 )
+from rest_framework.response import Response
+
+from utils import (
+    defines,
+    common_utils,
+)
 
 from . import serializers
 from . import filters
-
 
 class ProfileViewSet(viewsets.ModelViewSet):
     """
@@ -74,3 +87,24 @@ class ProfileViewSet(viewsets.ModelViewSet):
             user=user,
             content_object=content_object,
         )
+
+class ChangePasswordView(APIView):
+    """
+    修改密码
+    """
+    @swagger_auto_schema(method='post', request_body=serializers.ChangePasswordSerializer)
+    @list_route(methods=['post'])
+    def post(self, request, format=None):
+        serializer = serializers.ChangePasswordSerializer(
+            data=request.data,
+            context={'user': request.user},
+        )
+        serializer.is_valid(raise_exception=True)
+        
+        password = serializer.validated_data['password']
+        user = request.user
+        user.set_password(password)
+        user.save()
+        logout(request)
+        return Response(data={'status': 'success'})
+       

@@ -9,4 +9,10 @@ router = routers.DefaultRouter()
 router.register(r'profile', views.ProfileViewSet)
 
 urlpatterns = router.urls
+urlpatterns += [
+    url(
+        r'change_password/$',
+        views.ChangePasswordView.as_view(),
+    )
+]
 

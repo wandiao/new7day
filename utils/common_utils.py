@@ -120,6 +120,7 @@ def get_error_msg(form):
         label = form.fields[form.errors.items()[0][0]].label or label
     except:
         pass
+    print(form.errors.values())
     msg = u'{0}: {1}'.format(
         label,
         form.errors.values()[0][0]

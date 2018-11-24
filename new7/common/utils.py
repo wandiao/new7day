@@ -14,7 +14,7 @@ def create_user(phone):
     username = common_utils.get_uuid()
     user = User.objects.create_user(
         username=username,
-        password=phone,
+        password='123456',
     )
     return user
 
