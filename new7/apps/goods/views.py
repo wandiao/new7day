@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 import datetime
-import unicodecsv as csv
+import xlrd
 from django.db.transaction import atomic
 from rest_framework import viewsets
 from django.db.models import Sum, F
@@ -207,8 +207,12 @@ class GoodsViewSet(viewsets.ModelViewSet):
     serializer = self.get_serializer(data=request.data)
     operator = self.request.user.profile
     serializer.is_valid(raise_exception=True)
-    reader = csv.reader(ifile)
-    for row in islice(reader, 1, None):
+    file = serializer.validated_data['file']
+    reader = xlrd.open_workbook(file_contents=file.read(), encoding_override = 'utf8')
+    sheet=reader.sheet_by_index(0)
+    nrows = sheet.nrows
+    for i in range(1, nrows):
+      row = sheet.row_values(i)
       data = dict(
         name=row[0],
         short_name=row[1],
