@@ -534,3 +534,8 @@ class DepotSerializer(serializers.ModelSerializer):
       'desc',
       'depot_keepers',
     )
+
+class FileImportExportSerializer(serializers.Serializer):
+    file = serializers.FileField(
+        help_text=u'file',
+    )

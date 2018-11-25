@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 import datetime
+import unicodecsv as csv
+from django.db.transaction import atomic
 from rest_framework import viewsets
 from django.db.models import Sum, F
 from drf_yasg import openapi
@@ -55,6 +57,9 @@ class GoodsViewSet(viewsets.ModelViewSet):
   stats:
   成本月度统计
 
+  file_import:
+  商品导入
+
   delete:
   删除商品
   """
@@ -70,6 +75,8 @@ class GoodsViewSet(viewsets.ModelViewSet):
       return common_serializers.GoodsCostSerializer
     elif self.action == 'stats':
       return common_serializers.GoodsStatsSerializer
+    elif self.action == 'file_import':
+      return common_serializers.FileImportExportSerializer
     return common_serializers.GoodsSerializer
 
   @list_route(methods=['get'])
@@ -192,9 +199,33 @@ class GoodsViewSet(viewsets.ModelViewSet):
       )
       res.append(month_data)
     stats_data = self.get_serializer(res, many=True)
-
-
     return Response(stats_data.data)
+
+  @list_route(methods=['post'])  # noqa
+  @atomic
+  def file_import(self, request, *args, **kwargs):
+    serializer = self.get_serializer(data=request.data)
+    operator = self.request.user.profile
+    serializer.is_valid(raise_exception=True)
+    reader = csv.reader(ifile)
+    for row in islice(reader, 1, None):
+      data = dict(
+        name=row[0],
+        short_name=row[1],
+        code=row[2],
+        in_price=row[3],
+        sale_price=row[4],
+        spec=row[5],
+        unit=row[6],
+        warn_stock=row[7],
+        desc=row[8],
+      )
+      good_serializer = common_serializers.GoodsSerializer(data=data)
+      good_serializer.is_valid(raise_exception=True)
+      good_serializer.save()
+    return Response(u'导入成功', status.HTTP_201_CREATED)
+
+
     
 
 
