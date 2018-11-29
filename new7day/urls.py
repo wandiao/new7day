@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^client/', include(('new7.apps.client.urls','client'), namespace='client')),
     url(r'^depot/', include(('new7.apps.depot.urls','depot'), namespace='depot')),
     url(r'^goods/', include(('new7.apps.goods.urls','goods'), namespace='goods')),
+    url(r'^shop/', include(('new7.apps.shop.urls','shop'), namespace='shop')),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -535,6 +535,25 @@ class DepotSerializer(serializers.ModelSerializer):
       'depot_keepers',
     )
 
+class ShopSerializer(serializers.ModelSerializer):
+  contact_user_name = serializers.CharField(
+    source='contact_user.name',
+    read_only=True
+  )
+  class Meta:
+    model = models.Shop
+    fields = (
+      'id',
+      'name',
+      'type',
+      'contact_user',
+      'contact_user_name',
+      'contact_phone',
+      'address',
+      'staff_num',
+    )
+
+
 class FileImportExportSerializer(serializers.Serializer):
     file = serializers.FileField(
         help_text=u'file',
