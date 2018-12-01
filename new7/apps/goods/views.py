@@ -112,6 +112,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
     openapi.Parameter('start_time', openapi.IN_QUERY, description="开始时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
     openapi.Parameter('end_time', openapi.IN_QUERY, description="结束时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
     openapi.Parameter('depot', openapi.IN_QUERY, description="库房", type=openapi.TYPE_STRING),
+    openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
   ])
   @list_route(methods=['get'])
   def cost(self, request, *args, **kwargs):
@@ -120,6 +121,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
     end_time = self.request.GET.get('end_time', None)
     damaged_queryset = models.GoodsDamaged.objects.all()
     depot = self.request.GET.get('depot', '')
+    shop = self.request.GET.get('shop', '')
     page = int(self.request.GET.get('page', 1))
     page_size = int(self.request.GET.get('page_size', 50))
     end_time = datetime.datetime.strptime(
@@ -143,6 +145,8 @@ class GoodsViewSet(viewsets.ModelViewSet):
       )
     if depot:
       queryset = queryset.filter(record_depot=depot)
+    if shop:
+      queryset = queryset.filter(shop=shop)
     records = queryset.filter(record_type='depot_in').values('goods', 'goods__name', 'unit', 'spec').annotate(count = Sum('count'), cost=Sum('amount'))
     for record in records:
       out_record = queryset.filter(record_type='depot_out', goods=record['goods']).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
@@ -162,16 +166,20 @@ class GoodsViewSet(viewsets.ModelViewSet):
   
   @swagger_auto_schema(method='get', manual_parameters=[
     openapi.Parameter('depot', openapi.IN_QUERY, description="仓库", type=openapi.TYPE_STRING),
+    openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
     openapi.Parameter('goods_id', openapi.IN_QUERY, description="商品id", type=openapi.TYPE_STRING),
   ])
   @list_route(methods=['get'])
   def stats(self, request, *args, **kwargs):
     depot = self.request.GET.get('depot', None)
+    shop = self.request.GET.get('shop', None)
     goods_id = self.request.GET.get('goods_id', None)
     queryset = models.GoodsRecord.objects.all()
     damaged_queryset = models.GoodsDamaged.objects.all()
     if depot:
       queryset = queryset.filter(record_depot=depot)
+    if shop:
+      shop = queryset.filter(shop=shop)
     if goods_id:
       queryset = queryset.filter(goods=goods_id)
     res = []
