@@ -96,6 +96,24 @@ class ProfileUpdateSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(u'该手机号已经存在')
         return value
 
+class ShopSerializer(serializers.ModelSerializer):
+  contact_user_name = serializers.CharField(
+    source='contact_user.name',
+    read_only=True
+  )
+  class Meta:
+    model = models.Shop
+    fields = (
+      'id',
+      'name',
+      'type',
+      'contact_user',
+      'contact_user_name',
+      'contact_phone',
+      'address',
+      'staff_num',
+    )
+
 class GoodsSerializer(serializers.ModelSerializer):
   last_operator_name = serializers.CharField(
     source='last_operator.name',
@@ -267,6 +285,11 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
     source='record_depot.name',
     read_only=True
   )
+  shop = ShopSerializer(
+    many=False,
+    help_text=u'订单商品',
+    read_only=True,
+  )
   class Meta:
     model = models.GoodsRecord
     fields = (
@@ -285,6 +308,7 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
       'record_time',
       'record_source',
       'operator_account',
+      'shop',
       'remarks',
       'amount',
     )
@@ -360,6 +384,12 @@ class OrderGoodsListSerializer(serializers.Serializer):
     help_text=u'操作仓库',
   )
 
+  shop = serializers.CharField(
+    max_length=20,
+    required=False,
+    help_text=u'出货店面',
+  )
+
 class OrderGoodsSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.OrderGoods
@@ -370,6 +400,7 @@ class OrderGoodsSerializer(serializers.ModelSerializer):
       'price',
       'unit',
       'operate_depot',
+      'shop',
     )
 
 class OrderGoodsDetailSerializer(serializers.ModelSerializer):
@@ -382,6 +413,10 @@ class OrderGoodsDetailSerializer(serializers.ModelSerializer):
     source='operate_depot.name',
     read_only=True,
   )
+  shop_name = serializers.CharField(
+    source='shop.name',
+    read_only=True,
+  )
   class Meta:
     model = models.OrderGoods
     fields = (
@@ -392,6 +427,8 @@ class OrderGoodsDetailSerializer(serializers.ModelSerializer):
       'unit',
       'operate_depot',
       'operate_depot_name',
+      'shop',
+      'shop_name',
     )
 
 
@@ -533,24 +570,6 @@ class DepotSerializer(serializers.ModelSerializer):
       'cubage',
       'desc',
       'depot_keepers',
-    )
-
-class ShopSerializer(serializers.ModelSerializer):
-  contact_user_name = serializers.CharField(
-    source='contact_user.name',
-    read_only=True
-  )
-  class Meta:
-    model = models.Shop
-    fields = (
-      'id',
-      'name',
-      'type',
-      'contact_user',
-      'contact_user_name',
-      'contact_phone',
-      'address',
-      'staff_num',
     )
 
 

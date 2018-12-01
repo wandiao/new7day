@@ -283,6 +283,15 @@ class OrderGoods(BaseModel):
         help_text=u'操作仓库',
     )
 
+    shop =  models.ForeignKey(
+        'new7.Shop',
+        verbose_name=u'店面',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'店面',
+    )
+
 
     class Meta:
         verbose_name = u'订单商品'

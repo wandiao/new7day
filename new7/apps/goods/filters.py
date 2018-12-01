@@ -25,6 +25,7 @@ class GoodsRecordFilterSet(django_filters.FilterSet):
             'goods_id',
             'record_depot',
             'record_type',
+            'shop',
         )
 
 

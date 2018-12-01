@@ -85,6 +85,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         spec=goods.get('spec', instance.spec),
         order=order_data.id,
         operate_depot = goods.get('operate_depot', None),
+        shop=goods.get('shop', None),
       )
       record_data = dict(
         record_type=req_data.get('order_type', 'depot_in'),
@@ -98,6 +99,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         remarks=req_data.get('remarks', ''),
         unit=goods.get('unit', instance.unit),
         spec=goods.get('spec', instance.spec),
+        shop=goods.get('shop', None),
       )
       amount = 0
       if req_data['order_type'] == 'depot_in':

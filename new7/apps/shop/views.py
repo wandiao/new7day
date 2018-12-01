@@ -5,6 +5,8 @@ from rest_framework import viewsets
 from new7 import models
 from new7.common import serializers as common_serializers
 
+from . import filters
+
 class ShopViewSet(viewsets.ModelViewSet):
   """
   店面接口
@@ -29,4 +31,6 @@ class ShopViewSet(viewsets.ModelViewSet):
   """
   queryset = models.Shop.objects.all()
   serializer_class = common_serializers.ShopSerializer
+  search_fields = ('name',)
+  filter_class = filters.ShopFilterSet
 
