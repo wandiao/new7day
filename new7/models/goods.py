@@ -329,9 +329,19 @@ class GoodsDamaged(BaseModel):
     damaged_depot = models.ForeignKey(
         'new7.Depot',
         verbose_name=u'所属仓库',
-        null=False,
+        null=True,
+        blank=True,
         on_delete=models.PROTECT,
         help_text=u'所属仓库',
+    )
+
+    damaged_shop = models.ForeignKey(
+        'new7.Shop',
+        verbose_name=u'所属店面',
+        null=True,
+        blank=True,
+        on_delete=models.PROTECT,
+        help_text=u'所属店面',
     )
 
     report_time = models.DateTimeField(
@@ -355,6 +365,7 @@ class GoodsDamaged(BaseModel):
         blank=True,
         help_text=u'操作人员',
     )
+
 
 
     

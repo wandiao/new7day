@@ -1,0 +1,1 @@
+mysqldump -uroot -proot --all-databases > /data/dbdata/mysqlbak/ ` date +%Y%m%d`.sql find /data/dbdata/mysqlbak/ -mtime +7 -name '*[1-9].sql' - exec rm -rf {} \; find /data/dbdata/mysqlbak/ -mtime +92 -name '*.sql' - exec rm -rf {} \; 

@@ -334,6 +334,10 @@ class GoodsDamagedSerializer(serializers.ModelSerializer):
     source='operator.name',
     read_only=True
   )
+  damaged_shop_name = serializers.CharField(
+    source='damaged_shop.name',
+    read_only=True
+  )
   class Meta:
     model = models.GoodsDamaged
     fields = (
@@ -344,6 +348,8 @@ class GoodsDamagedSerializer(serializers.ModelSerializer):
       'price',
       'damaged_depot',
       'damaged_depot_name',
+      'damaged_shop',
+      'damaged_shop_name',
       'report_time',
       'operator',
       'operator_name',

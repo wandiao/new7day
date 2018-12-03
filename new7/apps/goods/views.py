@@ -178,8 +178,10 @@ class GoodsViewSet(viewsets.ModelViewSet):
     damaged_queryset = models.GoodsDamaged.objects.all()
     if depot:
       queryset = queryset.filter(record_depot=depot)
+      damaged_queryset = damaged_queryset.filter(damaged_depot=depot)
     if shop:
       shop = queryset.filter(shop=shop)
+      damaged_queryset = damaged_queryset.filter(damaged_shop=shop)
     if goods_id:
       queryset = queryset.filter(goods=goods_id)
     res = []
@@ -299,35 +301,37 @@ class GoodsDamagedViewSet(viewsets.ModelViewSet):
     data['operator'] = operator.id
     data['report_time'] = operate_time
     instance = models.Goods.objects.get(pk=data['goods'])
-    if instance.stock - data['count'] < 0:
-      raise rest_serializers.ValidationError({
-        'error': '报损数量超过库存数',
-      })
-    tmp_count = data['count']
-    while (tmp_count > 0):
-      # 取出含有剩余量的第一条数据
-      current = models.GoodsRecord.objects.filter(
-        record_type='depot_in',
-        goods = data['goods'],
-        count__gt=F('leave_count'),
-        record_depot=data['damaged_depot'],
-      ).order_by('record_time').first()
-      if current:
-        spare = current.count - current.leave_count
-        if tmp_count <= spare:
-          current.leave_count = current.leave_count + tmp_count
-          current.save()
-          tmp_count = 0
-        else:
-          current.leave_count = current.count
-          current.save()
-          tmp_count = tmp_count - spare
-      else:
+    if 'damaged_depot' in data:
+      if instance.stock - data['count'] < 0:
         raise rest_serializers.ValidationError({
           'error': '报损数量超过库存数',
-        })  
-    instance.stock = instance.stock - data['count']
-    instance.save()
+        })
+      tmp_count = data['count']
+      while (tmp_count > 0):
+        # 取出含有剩余量的第一条数据
+        current = models.GoodsRecord.objects.filter(
+          record_type='depot_in',
+          goods = data['goods'],
+          count__gt=F('leave_count'),
+          record_depot=data['damaged_depot'],
+        ).order_by('record_time').first()
+        if current:
+          spare = current.count - current.leave_count
+          if tmp_count <= spare:
+            current.leave_count = current.leave_count + tmp_count
+            current.save()
+            tmp_count = 0
+          else:
+            current.leave_count = current.count
+            current.save()
+            tmp_count = tmp_count - spare
+        else:
+          raise rest_serializers.ValidationError({
+            'error': '报损数量超过库存数',
+          })  
+      instance.stock = instance.stock - data['count']
+      instance.save()
+    
     serializer = common_serializers.GoodsDamagedSerializer(data=data)
     if serializer.is_valid():
       serializer.save()

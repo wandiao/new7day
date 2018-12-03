@@ -38,4 +38,5 @@ class GoodsDamagedFilterSet(django_filters.FilterSet):
         fields = (
             'goods_id',
             'damaged_depot',
+            'damaged_shop',
         )
