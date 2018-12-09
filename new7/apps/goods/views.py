@@ -234,6 +234,10 @@ class GoodsViewSet(viewsets.ModelViewSet):
         warn_stock=row[7],
         desc=row[8],
       )
+      if models.Goods.objects.filter(name=row[0]):
+        raise rest_serializers.ValidationError({
+          'error': u'商品%s已存在' % row[0],
+        })
       good_serializer = common_serializers.GoodsSerializer(data=data)
       good_serializer.is_valid(raise_exception=True)
       good_serializer.save()
