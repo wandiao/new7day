@@ -79,6 +79,11 @@ class Supplier(BaseModel):
         help_text=u'描述',
     )
 
+    common_used = models.BooleanField(
+       help_text=u'是否可以被普通员工所用',
+       default=True,
+    )
+
     def __str__(self):
         return self.name
     

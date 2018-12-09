@@ -1,6 +1,7 @@
 # coding:utf-8
 
 from django.db import models
+import datetime
 
 from .base import BaseModel
 
@@ -238,6 +239,20 @@ class GoodsRecord(BaseModel):
         help_text=u'记录时间',
     )
 
+    production_date = models.DateField(
+        u'生产日期',
+        blank=True,
+        null=True,
+        help_text=u'生产日期',
+    )
+
+    expiration_date = models.DateField(
+        u'过期日期',
+        blank=True,
+        null=True,
+        help_text=u'过期日期',
+    )
+
     record_source = models.CharField(
         u'操作来源',
         max_length=50,
@@ -253,6 +268,15 @@ class GoodsRecord(BaseModel):
         null=True,
         blank=True,
         help_text=u'操作仓库',
+    )
+
+    supplier = models.ForeignKey(
+        'new7.Supplier',
+        verbose_name=u'供应商',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'供应商',
     )
 
     shop =  models.ForeignKey(
@@ -287,10 +311,13 @@ class GoodsRecord(BaseModel):
         help_text=u'规格',
     )
 
-    # def save(self, *args, **kwargs):
-    #     if not self.amount:
-    #         self.amount = self.price * self.count
-    #     super().save(*args, **kwargs)
+
+    @property
+    def expirate_status(self):
+        if self.expiration_date and datetime.date.today() > self.expiration_date:
+            return True
+        else:
+            return False
 
     def __str__(self):
         return self.create_time.strftime("%Y-%m-%d %H:%M:%S")

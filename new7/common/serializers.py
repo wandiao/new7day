@@ -290,6 +290,10 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
     help_text=u'订单商品',
     read_only=True,
   )
+  supplier_name = serializers.CharField(
+    source='supplier.name',
+    read_only=True
+  )
   class Meta:
     model = models.GoodsRecord
     fields = (
@@ -309,8 +313,13 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
       'record_source',
       'operator_account',
       'shop',
+      'supplier',
+      'supplier_name',
       'remarks',
       'amount',
+      'production_date',
+      'expiration_date',
+      'expirate_status',
     )
 
 class GoodsDamagedSerializer(serializers.ModelSerializer):
@@ -396,6 +405,18 @@ class OrderGoodsListSerializer(serializers.Serializer):
     help_text=u'出货店面',
   )
 
+  production_date = serializers.DateField(
+    required=False,
+    help_text=u'生产日期',
+  )
+
+  expiration_date = serializers.DateField(
+    required=False,
+    help_text=u'过期日期',
+  )
+
+
+
 class OrderGoodsSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.OrderGoods
@@ -435,6 +456,9 @@ class OrderGoodsDetailSerializer(serializers.ModelSerializer):
       'operate_depot_name',
       'shop',
       'shop_name',
+      'production_date',
+      'expiration_date',
+      'expirate_status',
     )
 
 
@@ -546,6 +570,7 @@ class SupplierSerializer(serializers.ModelSerializer):
       'operator_name',
       'license_code',
       'desc',
+      'common_used',
     )
 
 class ClientSeralizer(serializers.ModelSerializer):

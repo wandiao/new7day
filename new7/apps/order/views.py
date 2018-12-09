@@ -86,11 +86,14 @@ class OrderViewSet(viewsets.ModelViewSet):
         order=order_data.id,
         operate_depot = goods.get('operate_depot', None),
         shop=goods.get('shop', None),
+        production_date=goods.get('production_date', None),
+        expiration_date=goods.get('expiration_date', None),
       )
       record_data = dict(
         record_type=req_data.get('order_type', 'depot_in'),
         record_time=operate_time,
         order=order_data.id,
+        supplier=req_data.get('supplier', None),
         count=goods['count'],
         goods=goods['goods_id'],
         price=goods.get('price', 0),
@@ -100,6 +103,8 @@ class OrderViewSet(viewsets.ModelViewSet):
         unit=goods.get('unit', instance.unit),
         spec=goods.get('spec', instance.spec),
         shop=goods.get('shop', None),
+        production_date=goods.get('production_date', None),
+        expiration_date=goods.get('expiration_date', None),
       )
       amount = 0
       if req_data['order_type'] == 'depot_in':

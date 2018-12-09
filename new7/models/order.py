@@ -1,6 +1,7 @@
 # coding:utf-8
 
 from django.db import models
+import datetime
 
 from .base import BaseModel
 
@@ -291,6 +292,26 @@ class OrderGoods(BaseModel):
         blank=True,
         help_text=u'店面',
     )
+
+    production_date = models.DateField(
+        u'生产日期',
+        blank=True,
+        null=True,
+        help_text=u'生产日期',
+    )
+
+    expiration_date = models.DateField(
+        u'过期日期',
+        blank=True,
+        null=True,
+        help_text=u'过期日期',
+    )
+
+    @property
+    def expirate_status(self):
+        if datetime.datetime.now() > self.expiration_date:
+            return True
+        return False
 
 
     class Meta:
