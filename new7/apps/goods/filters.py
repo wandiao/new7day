@@ -19,6 +19,12 @@ class GoodsRecordFilterSet(django_filters.FilterSet):
     goods_id = django_filters.CharFilter(
         field_name='goods',
     )
+
+    expiration_date = django_filters.DateFilter(
+        name='expiration_date',
+        lookup_expr='lte',
+        label=u'过期时间',
+    )
     class Meta:
         model = models.GoodsRecord
         fields = (
