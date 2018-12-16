@@ -395,7 +395,7 @@ class OrderGoodsListSerializer(serializers.Serializer):
 
   operate_depot = serializers.CharField(
     max_length=20,
-    required=True,
+    required=False,
     help_text=u'操作仓库',
   )
 
