@@ -408,11 +408,13 @@ class OrderGoodsListSerializer(serializers.Serializer):
   production_date = serializers.DateField(
     required=False,
     help_text=u'生产日期',
+    allow_null=True,
   )
 
   expiration_date = serializers.DateField(
     required=False,
     help_text=u'过期日期',
+    allow_null=True,
   )
 
 
