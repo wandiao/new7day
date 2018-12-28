@@ -114,6 +114,19 @@ class ShopSerializer(serializers.ModelSerializer):
       'staff_num',
     )
 
+class ShopIncomeSerializer(serializers.ModelSerializer):
+  shop_name = serializers.CharField(
+    source='contact_user.name',
+    read_only=True
+  )
+  class Meta:
+    model = models.ShopIncome
+    fields = (
+      'shop',
+      'shop_name',
+      'income',
+    )
+
 class GoodsSerializer(serializers.ModelSerializer):
   last_operator_name = serializers.CharField(
     source='last_operator.name',

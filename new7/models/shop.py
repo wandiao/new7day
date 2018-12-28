@@ -58,3 +58,25 @@ class Shop(BaseModel):
         verbose_name = u'店面'
         verbose_name_plural = verbose_name
 
+
+class ShopIncome(BaseModel):
+    '''
+    店面收入
+    '''
+    shop = models.ForeignKey(
+        'new7.Shop',
+        verbose_name=u'店面',
+        on_delete=models.PROTECT,
+        null=False,
+        help_text=u'店面',
+    )
+
+    income = models.DecimalField(
+        u'收入',
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        help_text=u'收入',
+    )
+
+
