@@ -58,10 +58,34 @@ class OrderViewSet(viewsets.ModelViewSet):
     else:
         return common_serializers.OrderSerializer
 
-  def destroy(self, request, *args, **kwargs):
+  def destroy(self, request, pk=None):
     try:
       instance = self.get_object()
-      print(instance)
+      order_goods_list = models.OrderGoods.filter(order=pk)
+      for order_goods in order_goods_list:
+        goods_instance = models.Goods.objects.get(pk=order_goods.goods)
+        if instance.order_type == 'depot_in':
+          goods_instance.stock = goods_instance.stock - order_goods.count
+        elif instance.order_type == 'depot_out':
+          tmp_count = order_goods.count
+          while (tmp_count > 0):
+            current = models.GoodsRecord.objects.filter(
+              record_type='depot_in',
+              goods=order_goods.goods,
+              leave_count__gt=0,
+              record_depot=order_goods.operate_depot,
+            ).order_by('-record_time').first()
+            leave_count = current.count - order_goods.count
+            if (leave_count >= 0):
+              current.leave_count = leave_count
+              current.save()
+              tmp_count = 0
+            else:
+              current.leave_count = 0
+              current.save()
+              tmp_count = tmp_count - current.leave_count
+          goods_instance.stock = goods_instance.stock + order_goods.count
+        goods_instance.save()
       self.perform_destroy(instance)
     except Http404:
       pass
