@@ -11,6 +11,7 @@ from rest_framework.decorators import list_route, detail_route
 from django.db.transaction import atomic
 from django.db.models import F
 from rest_framework.response import Response
+from django.http import Http404
 
 from new7 import models
 from new7.common import serializers as common_serializers
@@ -56,6 +57,15 @@ class OrderViewSet(viewsets.ModelViewSet):
         return common_serializers.OrderCreateSerializer
     else:
         return common_serializers.OrderSerializer
+
+  def destroy(self, request, *args, **kwargs):
+    try:
+      instance = self.get_object()
+      print(instance)
+      self.perform_destroy(instance)
+    except Http404:
+      pass
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
   @list_route(methods=['post'])  # noqa
   @atomic
