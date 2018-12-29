@@ -192,7 +192,7 @@ class GoodsRecord(BaseModel):
     order = models.ForeignKey(
         'new7.Order',
         verbose_name=u'所属订单',
-        on_delete=models.PROTECT,
+        on_delete=models.CASCADE,
         null=True,
         blank=True,
         help_text=u'所属订单',
