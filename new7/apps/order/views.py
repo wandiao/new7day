@@ -68,7 +68,7 @@ class OrderViewSet(viewsets.ModelViewSet):
           goods_instance.stock = goods_instance.stock - order_goods.count
         elif instance.order_type == 'depot_out':
           tmp_count = order_goods.count
-          while (tmp_count > 0):
+          while tmp_count > 0:
             current = models.GoodsRecord.objects.filter(
               record_type='depot_in',
               goods=order_goods.goods,
@@ -76,7 +76,7 @@ class OrderViewSet(viewsets.ModelViewSet):
               record_depot=order_goods.operate_depot,
             ).order_by('-record_time').first()
             leave_count = current.count - order_goods.count
-            if (leave_count >= 0):
+            if leave_count >= 0:
               current.leave_count = leave_count
               current.save()
               tmp_count = 0
@@ -150,7 +150,7 @@ class OrderViewSet(viewsets.ModelViewSet):
             'error': u'%s库存不足' % instance.name,
           })
         tmp_count = goods['count']
-        while (tmp_count > 0):
+        while tmp_count > 0:
           # 取出含有剩余量的第一条数据
           current = models.GoodsRecord.objects.filter(
             record_type='depot_in',
