@@ -222,3 +222,8 @@ EMAIL_HOST_USER = '851298395@qq.com' # 帐号
 EMAIL_HOST_PASSWORD = 'pfpgzdfecltjbfce'  # 密码
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
+try:
+    from .local_settings import *
+except ImportError:
+    print('error in local_settings')
+

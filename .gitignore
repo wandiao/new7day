@@ -19,3 +19,6 @@ nosetests.xml
 *.log
 *.sock
 *.pid
+
+
+local_*
