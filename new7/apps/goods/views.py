@@ -180,7 +180,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
       queryset = queryset.filter(record_depot=depot)
       damaged_queryset = damaged_queryset.filter(damaged_depot=depot)
     if shop:
-      shop = queryset.filter(shop=shop)
+      queryset = queryset.filter(shop=shop)
       damaged_queryset = damaged_queryset.filter(damaged_shop=shop)
     if goods_id:
       queryset = queryset.filter(goods=goods_id)
