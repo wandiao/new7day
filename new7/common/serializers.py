@@ -391,8 +391,10 @@ class OrderGoodsListSerializer(serializers.Serializer):
     required=True,
     help_text=u'数量',
   )
-  price = serializers.FloatField(
+  price = serializers.DecimalField(
     help_text=u'价格',
+    max_digits=10,
+    decimal_places=2,
   )
   unit = serializers.CharField(
     max_length=20,

@@ -259,7 +259,7 @@ class OrderGoods(BaseModel):
       help_text=u'数量'
     )
 
-    price =models.DecimalField(
+    price = models.DecimalField(
         u'价格',
         default=0,
         max_digits=10,

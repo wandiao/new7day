@@ -210,10 +210,11 @@ class GoodsRecord(BaseModel):
       help_text=u'出库数量'
     )
 
-    price = models.FloatField(
+    price = models.DecimalField(
         u'价格',
-        blank=True,
-        null=True,
+        default=0,
+        max_digits=10,
+        decimal_places=2,
         help_text=u'价格',
     )
 
@@ -340,8 +341,11 @@ class GoodsDamaged(BaseModel):
       help_text=u'数量'
     )
 
-    price = models.FloatField(
+    price = models.DecimalField(
         u'价格',
+        default=0,
+        max_digits=10,
+        decimal_places=2,
         help_text=u'价格',
     )
 
