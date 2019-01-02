@@ -21,7 +21,7 @@ class GoodsRecordFilterSet(django_filters.FilterSet):
     )
 
     expiration_date = django_filters.DateFilter(
-        name='expiration_date',
+        field_name='expiration_date',
         lookup_expr='lte',
         label=u'过期时间',
     )
