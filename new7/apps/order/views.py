@@ -61,9 +61,9 @@ class OrderViewSet(viewsets.ModelViewSet):
   def destroy(self, request, pk=None):
     try:
       instance = self.get_object()
-      order_goods_list = models.OrderGoods.filter(order=pk)
+      order_goods_list = models.OrderGoods.objects.filter(order=pk)
       for order_goods in order_goods_list:
-        goods_instance = models.Goods.objects.get(pk=order_goods.goods)
+        goods_instance = models.Goods.objects.get(pk=order_goods.goods.id)
         if instance.order_type == 'depot_in':
           goods_instance.stock = goods_instance.stock - order_goods.count
         elif instance.order_type == 'depot_out':
@@ -87,6 +87,7 @@ class OrderViewSet(viewsets.ModelViewSet):
           goods_instance.stock = goods_instance.stock + order_goods.count
         goods_instance.save()
       self.perform_destroy(instance)
+      return Response(u'删除成功', status.HTTP_201_CREATED)
     except Http404:
       pass
     return Response(status=status.HTTP_204_NO_CONTENT)

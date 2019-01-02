@@ -309,8 +309,9 @@ class OrderGoods(BaseModel):
 
     @property
     def expirate_status(self):
-        if datetime.datetime.now() > self.expiration_date:
-            return True
+        if self.expiration_date:
+            if datetime.datetime.now() > self.expiration_date:
+                return True
         return False
 
 
