@@ -5,6 +5,6 @@ from . import views
 
 router = routers.DefaultRouter()
 router.register(r'shop', views.ShopViewSet)
-router.register(r'shop/income', views.ShopIncomeViewSet)
+router.register(r'income', views.ShopIncomeViewSet)
 
 urlpatterns = router.urls

@@ -79,4 +79,11 @@ class ShopIncome(BaseModel):
         help_text=u'收入',
     )
 
+    def __str__(self):
+        return self.create_time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    class Meta:
+        verbose_name = u'店面收入'
+        verbose_name_plural = verbose_name
+
 
