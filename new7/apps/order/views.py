@@ -134,6 +134,7 @@ class OrderViewSet(viewsets.ModelViewSet):
     order_data = serializer.save()
     total_count = 0
     for goods in goods_info:
+      print(goods.get('shop', None), '2333')
       instance = models.Goods.objects.get(pk=goods['goods_id'])
       data = dict(
         goods=goods['goods_id'],
@@ -144,7 +145,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         order=order_data.id,
         operate_depot = goods.get('operate_depot', None),
         supplier=goods.get('supplier', None),
-        shop=goods.get('shop', None),
+        shop=goods['shop'],
         from_depot=goods.get('from_depot', None),
         production_date=goods.get('production_date', None),
         expiration_date=goods.get('expiration_date', None),
@@ -163,7 +164,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         remarks=req_data.get('remarks', ''),
         unit=goods.get('unit', instance.unit),
         spec=goods.get('spec', instance.spec),
-        shop=goods.get('shop', None),
+        shop=goods['shop'],
         production_date=goods.get('production_date', None),
         expiration_date=goods.get('expiration_date', None),
       )
@@ -204,7 +205,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             })  
         stock = instance.stock - goods['count']
       elif goods['from_depot'] != None:
-        print(1)
         if instance.stock - goods['count'] < 0:
           raise rest_serializers.ValidationError({
             'error': u'%s库存不足' % instance.name,

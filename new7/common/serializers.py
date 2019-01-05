@@ -321,10 +321,9 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
     source='from_depot.name',
     read_only=True
   )
-  shop = ShopSerializer(
-    many=False,
-    help_text=u'订单商品',
-    read_only=True,
+  shop_name = serializers.CharField(
+    source='shop.name',
+    read_only=True
   )
   supplier_name = serializers.CharField(
     source='supplier.name',
@@ -351,6 +350,7 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
       'record_source',
       'operator_account',
       'shop',
+      'shop_name',
       'supplier',
       'supplier_name',
       'remarks',
