@@ -61,11 +61,34 @@ class OrderViewSet(viewsets.ModelViewSet):
   def destroy(self, request, pk=None):
     try:
       instance = self.get_object()
+      first = models.Order.objects.order_by('-create_time').first()
+      if int(pk) != int(first.id):
+        raise rest_serializers.ValidationError({
+          'error': '该数据无法删除',
+        }) 
       order_goods_list = models.OrderGoods.objects.filter(order=pk)
       for order_goods in order_goods_list:
         goods_instance = models.Goods.objects.get(pk=order_goods.goods.id)
-        if instance.order_type == 'depot_in':
+        if instance.order_type == 'depot_in' and order_goods.from_depot == None:
           goods_instance.stock = goods_instance.stock - order_goods.count
+        elif order_goods.from_depot != None:
+          tmp_count = order_goods.count
+          while tmp_count > 0:
+            current = models.GoodsRecord.objects.filter(
+              record_type='depot_in',
+              goods=order_goods.goods,
+              leave_count__gt=0,
+              record_depot=order_goods.from_depot,
+            ).order_by('-record_time').first()
+            leave_count = current.count - order_goods.count
+            if leave_count >= 0:
+              current.leave_count = leave_count
+              current.save()
+              tmp_count = 0
+            else:
+              current.leave_count = 0
+              current.save()
+              tmp_count = tmp_count - current.leave_count
         elif instance.order_type == 'depot_out':
           tmp_count = order_goods.count
           while tmp_count > 0:
@@ -120,7 +143,9 @@ class OrderViewSet(viewsets.ModelViewSet):
         spec=goods.get('spec', instance.spec),
         order=order_data.id,
         operate_depot = goods.get('operate_depot', None),
+        supplier=goods.get('supplier', None),
         shop=goods.get('shop', None),
+        from_depot=goods.get('from_depot', None),
         production_date=goods.get('production_date', None),
         expiration_date=goods.get('expiration_date', None),
       )
@@ -128,12 +153,13 @@ class OrderViewSet(viewsets.ModelViewSet):
         record_type=req_data.get('order_type', 'depot_in'),
         record_time=operate_time,
         order=order_data.id,
-        supplier=req_data.get('supplier', None),
+        supplier=goods.get('supplier', None),
         count=goods['count'],
         goods=goods['goods_id'],
         price=goods.get('price', 0),
         operator_account=operator.phone,
         record_depot=goods.get('operate_depot', None),
+        from_depot=goods.get('from_depot', None),
         remarks=req_data.get('remarks', ''),
         unit=goods.get('unit', instance.unit),
         spec=goods.get('spec', instance.spec),
@@ -142,9 +168,10 @@ class OrderViewSet(viewsets.ModelViewSet):
         expiration_date=goods.get('expiration_date', None),
       )
       amount = 0
-      if req_data['order_type'] == 'depot_in':
+      stock = instance.stock
+      if req_data['order_type'] == 'depot_in' and goods['from_depot'] == None:
         stock = instance.stock + goods['count']
-        amount = goods['count'] * goods['price']
+        amount = goods['count'] * goods['price']   
       elif req_data['order_type'] == 'depot_out':
         if instance.stock - goods['count'] < 0:
           raise rest_serializers.ValidationError({
@@ -176,6 +203,40 @@ class OrderViewSet(viewsets.ModelViewSet):
               'error': u'%s库存不足' % instance.name,
             })  
         stock = instance.stock - goods['count']
+      elif goods['from_depot'] != None:
+        print(1)
+        if instance.stock - goods['count'] < 0:
+          raise rest_serializers.ValidationError({
+            'error': u'%s库存不足' % instance.name,
+          })
+        tmp_count = goods['count']
+        while tmp_count > 0:
+          # 取出含有剩余量的第一条数据
+          current = models.GoodsRecord.objects.filter(
+            record_type='depot_in',
+            goods = goods['goods_id'],
+            count__gt=F('leave_count'),
+            record_depot=goods.get('from_depot', None),
+          ).order_by('record_time').first()
+          if current:
+            spare = current.count - current.leave_count
+            if tmp_count <= spare:
+              current.leave_count = current.leave_count + tmp_count
+              current.save()
+              amount += current.price * tmp_count
+              tmp_count = 0
+            else:
+              current.leave_count = current.count
+              current.save()
+              amount += current.price * spare
+              tmp_count = tmp_count - spare
+          else:
+            raise rest_serializers.ValidationError({
+              'error': u'%s库存不足' % instance.name,
+            })
+        
+          
+        
       record_data['amount'] = amount
       goods_record = common_serializers.GoodsRecordSerializer(data=record_data)
       goods_record.is_valid(raise_exception=True)

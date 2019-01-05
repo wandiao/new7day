@@ -70,6 +70,14 @@ class ShopIncomeViewSet(viewsets.ModelViewSet):
   queryset = models.ShopIncome.objects.all()
   serializer_class = common_serializers.ShopIncomeSerializer
 
+  def create(self, request):
+    operator = self.request.user.profile
+    request.data['operator'] = operator.id
+    serializer = self.get_serializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    instance = self.perform_create(serializer)
+    return Response(serializer.data)
+
   @swagger_auto_schema(method='get', manual_parameters=[
     openapi.Parameter('start_time', openapi.IN_QUERY, description="开始时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
     openapi.Parameter('end_time', openapi.IN_QUERY, description="结束时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),

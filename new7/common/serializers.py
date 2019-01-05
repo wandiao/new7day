@@ -116,7 +116,11 @@ class ShopSerializer(serializers.ModelSerializer):
 
 class ShopIncomeSerializer(serializers.ModelSerializer):
   shop_name = serializers.CharField(
-    source='contact_user.name',
+    source='shop.name',
+    read_only=True
+  )
+  operator_name = serializers.CharField(
+    source='operator.name',
     read_only=True
   )
   class Meta:
@@ -125,6 +129,10 @@ class ShopIncomeSerializer(serializers.ModelSerializer):
       'shop',
       'shop_name',
       'income',
+      'operator',
+      'operator_name',
+      'create_time',
+      'update_time',
     )
 
 class GoodsSerializer(serializers.ModelSerializer):
@@ -285,6 +293,17 @@ class  GoodsStatsSerializer(serializers.Serializer):
     help_text=u'报损成本',
   )
 
+  move_count = serializers.IntegerField(
+    help_text=u'转移数量',
+  )
+
+  move_cost = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    help_text=u'转移成本',
+  )
+
   
 
 
@@ -296,6 +315,10 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
   )
   record_depot_name = serializers.CharField(
     source='record_depot.name',
+    read_only=True
+  )
+  from_depot_name = serializers.CharField(
+    source='from_depot.name',
     read_only=True
   )
   shop = ShopSerializer(
@@ -322,6 +345,8 @@ class GoodsRecordSerializer(serializers.ModelSerializer):
       'record_type',
       'record_depot',
       'record_depot_name',
+      'from_depot',
+      'from_depot_name',
       'record_time',
       'record_source',
       'operator_account',
@@ -412,6 +437,20 @@ class OrderGoodsListSerializer(serializers.Serializer):
     max_length=20,
     required=False,
     help_text=u'操作仓库',
+  )
+
+  from_depot = serializers.CharField(
+    max_length=20,
+    required=False,
+    help_text=u'进货仓库',
+    allow_null=True,
+  )
+
+  supplier = serializers.CharField(
+    max_length=20,
+    required=False,
+    help_text=u'供应商',
+    allow_null=True,
   )
 
   shop = serializers.CharField(

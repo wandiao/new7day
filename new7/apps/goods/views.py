@@ -116,7 +116,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
   ])
   @list_route(methods=['get'])
   def cost(self, request, *args, **kwargs):
-    queryset = models.GoodsRecord.objects.all()
+    queryset = models.GoodsRecord.objects.filter(from_depot__isnull=True)
     start_time = self.request.GET.get('start_time', None)
     end_time = self.request.GET.get('end_time', None)
     damaged_queryset = models.GoodsDamaged.objects.all()
@@ -189,8 +189,11 @@ class GoodsViewSet(viewsets.ModelViewSet):
       current = queryset.filter(
         record_time__month=n,
         record_type='depot_in',
-      ).aggregate(count = Sum('count'), cost=Sum('amount'))
-      print(current)
+      ).filter(from_depot__isnull=True).aggregate(count = Sum('count'), cost=Sum('amount'))
+      move_current = queryset.filter(
+        record_time__month=n,
+        record_type='depot_in',
+      ).exclude(from_depot__isnull=True).aggregate(move_count = Sum('count'), move_cost=Sum('amount'))
       used_current = queryset.filter(
         record_time__month=n,
         record_type='depot_out',
@@ -206,6 +209,8 @@ class GoodsViewSet(viewsets.ModelViewSet):
         used_cost=used_current.get('used_cost', 0),
         damaged_count=damaged_current.get('damaged_count', 0),
         damaged_cost=damaged_current.get('damaged_cost', 0),
+        move_count=move_current.get('move_count', 0),
+        move_cost=move_current.get('move_cost', 0),
       )
       res.append(month_data)
     stats_data = self.get_serializer(res, many=True)

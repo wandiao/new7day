@@ -79,6 +79,15 @@ class ShopIncome(BaseModel):
         help_text=u'收入',
     )
 
+    operator = models.ForeignKey(
+        'new7.Profile',
+        verbose_name=u'操作人员',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'操作人员',
+    )
+
     def __str__(self):
         return self.create_time.strftime("%Y-%m-%d %H:%M:%S")
     

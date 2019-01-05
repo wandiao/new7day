@@ -281,7 +281,27 @@ class OrderGoods(BaseModel):
         on_delete=models.PROTECT,
         null=True,
         blank=True,
+        related_name='operate_depot',
         help_text=u'操作仓库',
+    )
+
+    from_depot = models.ForeignKey(
+        'new7.Depot',
+        verbose_name=u'来源仓库',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name='from_depot1',
+        help_text=u'来源仓库',
+    )
+
+    supplier = models.ForeignKey(
+        'new7.Supplier',
+        verbose_name=u'供应商',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'供应商',
     )
 
     shop =  models.ForeignKey(
