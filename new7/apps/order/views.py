@@ -145,7 +145,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         order=order_data.id,
         operate_depot = goods.get('operate_depot', None),
         supplier=goods.get('supplier', None),
-        shop=goods['shop'],
+        shop=goods.get('shop', None),
         from_depot=goods.get('from_depot', None),
         production_date=goods.get('production_date', None),
         expiration_date=goods.get('expiration_date', None),
@@ -164,7 +164,7 @@ class OrderViewSet(viewsets.ModelViewSet):
         remarks=req_data.get('remarks', ''),
         unit=goods.get('unit', instance.unit),
         spec=goods.get('spec', instance.spec),
-        shop=goods['shop'],
+        shop=goods.get('shop', None),
         production_date=goods.get('production_date', None),
         expiration_date=goods.get('expiration_date', None),
       )
