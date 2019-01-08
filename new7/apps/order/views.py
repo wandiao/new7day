@@ -62,12 +62,17 @@ class OrderViewSet(viewsets.ModelViewSet):
     try:
       instance = self.get_object()
       first = models.Order.objects.order_by('-create_time').first()
-      if int(pk) != int(first.id):
-        raise rest_serializers.ValidationError({
-          'error': '该数据无法删除',
-        }) 
+      # if int(pk) != int(first.id):
+      #   raise rest_serializers.ValidationError({
+      #     'error': '该数据无法删除',
+      #   }) 
       order_goods_list = models.OrderGoods.objects.filter(order=pk)
       for order_goods in order_goods_list:
+        first_record = models.GoodsRecord.filter(goods=order_goods.goods.id).order_by('-create_time').first()
+        if int(first_record.order) != int(pk):
+          raise rest_serializers.ValidationError({
+            'error': '该数据无法删除',
+          }) 
         goods_instance = models.Goods.objects.get(pk=order_goods.goods.id)
         if instance.order_type == 'depot_in' and order_goods.from_depot == None:
           goods_instance.stock = goods_instance.stock - order_goods.count
