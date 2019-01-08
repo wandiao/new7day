@@ -88,7 +88,7 @@ class Profile(DeletedMixin, BaseModel):
     null=True,
     help_text=u'地址'
   )
-  salary = models.IntegerField(
+  salary = models.FloatField(
     u'工资',
     default=0,
     help_text=u'工资'

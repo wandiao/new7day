@@ -68,9 +68,11 @@ class Goods(BaseModel):
         help_text=u'商品售价',
     )
 
-    stock = models.IntegerField(
+    stock = models.DecimalField(
       u'库存',
       default=0,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'库存'
     )
 
@@ -143,9 +145,11 @@ class Goods(BaseModel):
       help_text=u'库存状态'
     )
 
-    warn_stock = models.IntegerField(
+    warn_stock = models.DecimalField(
       u'报警库存',
       default=10,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'报警库存'
     )
 
@@ -198,15 +202,19 @@ class GoodsRecord(BaseModel):
         help_text=u'所属订单',
     )
 
-    count = models.IntegerField(
+    count = models.DecimalField(
       u'数量',
       default=0,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'数量'
     )
 
-    leave_count = models.IntegerField(
+    leave_count = models.DecimalField(
       u'出库数量',
       default=0,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'出库数量'
     )
 
@@ -306,11 +314,8 @@ class GoodsRecord(BaseModel):
         help_text=u'备注',
     )
 
-    amount = models.DecimalField(
+    amount = models.FloatField(
         u'成本',
-        default=0,
-        max_digits=10,
-        decimal_places=2,
         help_text=u'成本',
     )
 
@@ -346,8 +351,10 @@ class GoodsDamaged(BaseModel):
         help_text=u'商品',
     )
 
-    count = models.IntegerField(
+    count = models.DecimalField(
       u'数量',
+      max_digits=10,
+      decimal_places=2,
       help_text=u'数量'
     )
 
@@ -359,11 +366,9 @@ class GoodsDamaged(BaseModel):
         help_text=u'价格',
     )
 
-    amount = models.DecimalField(
+    amount = models.FloatField(
         u'损失成本',
         default=0,
-        max_digits=10,
-        decimal_places=2,
         help_text=u'损失成本',
     )
 

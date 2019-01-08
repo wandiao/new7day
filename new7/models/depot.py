@@ -28,15 +28,19 @@ class Depot(BaseModel):
         help_text=u'仓库类型',
     )
 
-    stock = models.IntegerField(
+    stock = models.DecimalField(
       u'库存',
       default=0,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'库存'
     )
 
-    cubage = models.IntegerField(
+    cubage = models.DecimalField(
       u'容量',
       default=0,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'容量'
     )
 

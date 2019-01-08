@@ -174,13 +174,13 @@ class ShopInventoryStatSerializer(serializers.Serializer):
     help_text=u'店面名称',
     read_only=True
   )
-  total_stock = serializers.IntegerField(
+  total_stock = serializers.DecimalField(
     read_only=True,
     help_text=u'总库存',
-  )
-  total_amount = serializers.DecimalField(
     max_digits=10,
     decimal_places=2,
+  )
+  total_amount = serializers.FloatField(
     default=0,
     help_text=u'总成本',
   )
@@ -222,8 +222,10 @@ class GoodsStockSerializer(serializers.ModelSerializer):
     read_only=True,
     help_text=u'上次操作人姓名',
   )
-  current_depot_stock = serializers.IntegerField(
+  current_depot_stock = serializers.DecimalField(
     default=0,
+    max_digits=10,
+    decimal_places=2,
     help_text=u'当前仓库库存',
   )
   class Meta:
@@ -262,7 +264,9 @@ class GoodsCostSerializer(serializers.Serializer):
     max_length=20,
     help_text=u'商品名称',
   )
-  count = serializers.IntegerField(
+  count = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
     help_text=u'进货数量',
   )
   cost = serializers.DecimalField(
@@ -284,8 +288,10 @@ class GoodsCostSerializer(serializers.Serializer):
     help_text=u'规格',
   )
 
-  used_count = serializers.IntegerField(
+  used_count = serializers.DecimalField(
     help_text=u'使用数量',
+    max_digits=10,
+    decimal_places=2,
   )
 
   used_cost = serializers.DecimalField(
@@ -295,8 +301,10 @@ class GoodsCostSerializer(serializers.Serializer):
     help_text=u'使用成本',
   )
 
-  damaged_count = serializers.IntegerField(
+  damaged_count = serializers.DecimalField(
     help_text=u'报损数量',
+    max_digits=10,
+    decimal_places=2,
   )
 
   damaged_cost = serializers.DecimalField(
@@ -311,8 +319,10 @@ class  GoodsStatsSerializer(serializers.Serializer):
   month = serializers.IntegerField(
     help_text=u'月份',
   )
-  count = serializers.IntegerField(
+  count = serializers.DecimalField(
     help_text=u'进货数量',
+    max_digits=10,
+    decimal_places=2,
   )
   cost = serializers.DecimalField(
     max_digits=10,
@@ -321,8 +331,10 @@ class  GoodsStatsSerializer(serializers.Serializer):
     help_text=u'进货成本',
   )
 
-  used_count = serializers.IntegerField(
+  used_count = serializers.DecimalField(
     help_text=u'使用数量',
+    max_digits=10,
+    decimal_places=2,
   )
 
   used_cost = serializers.DecimalField(
@@ -332,8 +344,10 @@ class  GoodsStatsSerializer(serializers.Serializer):
     help_text=u'使用成本',
   )
 
-  damaged_count = serializers.IntegerField(
+  damaged_count = serializers.DecimalField(
     help_text=u'报损数量',
+    max_digits=10,
+    decimal_places=2,
   )
 
   damaged_cost = serializers.DecimalField(
@@ -343,7 +357,9 @@ class  GoodsStatsSerializer(serializers.Serializer):
     help_text=u'报损成本',
   )
 
-  move_count = serializers.IntegerField(
+  move_count = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
     help_text=u'转移数量',
   )
 
@@ -462,9 +478,11 @@ class OrderGoodsListSerializer(serializers.Serializer):
     max_length=20,
     help_text=u'商品id',
   )
-  count = serializers.IntegerField(
+  count = serializers.DecimalField(
     required=True,
     help_text=u'数量',
+    max_digits=10,
+    decimal_places=2,
   )
   price = serializers.DecimalField(
     help_text=u'价格',

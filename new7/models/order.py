@@ -148,9 +148,11 @@ class Order(BaseModel):
         decimal_places=2,
         help_text=u'总金额',
     )
-    total_count = models.IntegerField(
+    total_count = models.DecimalField(
       u'总数量',
       default=0,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'总数量'
     )
     pay_type = models.CharField(
@@ -253,9 +255,11 @@ class OrderGoods(BaseModel):
         help_text=u'商品',
     )
 
-    count = models.IntegerField(
+    count = models.DecimalField(
       u'数量',
       default=1,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'数量'
     )
 

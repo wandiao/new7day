@@ -115,9 +115,11 @@ class ShopInventory(BaseModel):
         help_text=u'商品',
     )
 
-    stock = models.IntegerField(
+    stock = models.DecimalField(
       u'库存',
       default=0,
+      max_digits=10,
+      decimal_places=2,
       help_text=u'库存'
     )
 

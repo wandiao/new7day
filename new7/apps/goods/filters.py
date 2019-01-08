@@ -25,6 +25,16 @@ class GoodsRecordFilterSet(django_filters.FilterSet):
         lookup_expr='lte',
         label=u'过期时间',
     )
+    start_time = django_filters.DateFilter(
+        field_name='record_time',
+        lookup_expr='gte',
+        label=u'操作时间',
+    )
+    end_time = django_filters.DateFilter(
+        field_name='record_time',
+        lookup_expr='lte',
+        label=u'操作时间',
+    )
     class Meta:
         model = models.GoodsRecord
         fields = (

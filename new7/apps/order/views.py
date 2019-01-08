@@ -175,7 +175,7 @@ class OrderViewSet(viewsets.ModelViewSet):
       )
       amount = 0
       stock = instance.stock
-      if req_data['order_type'] == 'depot_in' and goods['from_depot'] == None:
+      if req_data['order_type'] == 'depot_in' and goods.get('from_depot', None) == None:
         stock = instance.stock + goods['count']
         amount = goods['count'] * goods['price']   
       elif req_data['order_type'] == 'depot_out':
@@ -209,7 +209,7 @@ class OrderViewSet(viewsets.ModelViewSet):
               'error': u'%s库存不足' % instance.name,
             })  
         stock = instance.stock - goods['count']
-      elif goods['from_depot'] != None:
+      elif goods.get('from_depot', None) != None:
         if instance.stock - goods['count'] < 0:
           raise rest_serializers.ValidationError({
             'error': u'%s库存不足' % instance.name,
