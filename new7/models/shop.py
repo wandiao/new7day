@@ -129,6 +129,14 @@ class ShopInventory(BaseModel):
         help_text=u'商品价格',
     )
 
+    amount = models.DecimalField(
+        u'商品成本',
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        help_text=u'商品成本',
+    )
+
     operator = models.ForeignKey(
         'new7.Profile',
         verbose_name=u'操作人员',
@@ -138,9 +146,9 @@ class ShopInventory(BaseModel):
         help_text=u'操作人员',
     )
 
-    @property
-    def amount(self):
-        return self.price * self.stock
+    def save(self, *args, **kwargs):
+        self.amount = self.price * self.stock
+        super().save(*args, **kwargs)
 
 
 

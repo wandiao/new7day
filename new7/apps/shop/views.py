@@ -145,49 +145,29 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
     operator = self.request.user.profile
     request.data['operator'] = operator.id
     instance = self.queryset.filter(shop=request.data['shop'], goods=request.data['goods']).first()
-    # if instance:
-    #   serializer = self.get_serializer(instance, data=request.data, partial=True)
-    #   serializer.is_valid(raise_exception=True)
-    #   serializer.save()
-    # else:
-    serializer = self.get_serializer(data=request.data)
-    serializer.is_valid(raise_exception=True)
-    instance = self.perform_create(serializer)
+    if instance:
+      serializer = self.get_serializer(instance, data=request.data, partial=True)
+      serializer.is_valid(raise_exception=True)
+      serializer.save()
+    else:
+      serializer = self.get_serializer(data=request.data)
+      serializer.is_valid(raise_exception=True)
+      instance = self.perform_create(serializer)
     return Response(serializer.data)
 
-  # @swagger_auto_schema(method='get', manual_parameters=[
-  #   openapi.Parameter('start_time', openapi.IN_QUERY, description="开始时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
-  #   openapi.Parameter('end_time', openapi.IN_QUERY, description="结束时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
-  #   openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
-  # ])
-  # @list_route(methods=['get'])
-  # def stats(self, request, *args, **kwargs):
-  #   queryset = models.ShopInventory.objects.all()
-  #   start_time = self.request.GET.get('start_time', None)
-  #   end_time = self.request.GET.get('end_time', None)
-  #   shop = self.request.GET.get('shop', '')
-  #   end_time = datetime.datetime.strptime(
-  #               end_time, '%Y-%m-%d') if end_time else datetime.datetime.now()
-  #   if start_time:
-  #     start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d')
-  #     queryset = queryset.filter(
-  #       create_time__gte=start_time,
-  #       create_time__lte=end_time,
-  #     )
-  #   else:
-  #     queryset = queryset.filter(
-  #       create_time__lte=end_time,
-  #     )
+  @swagger_auto_schema(method='get', manual_parameters=[
+    openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
+  ])
+  @list_route(methods=['get'])
+  def stats(self, request, *args, **kwargs):
+    queryset = models.ShopInventory.objects.all()
+    shop = self.request.GET.get('shop', '')
+    if shop:
+      queryset = queryset.filter(shop=shop)
     
-  #   if shop:
-  #     queryset = queryset.filter(shop=shop)
-  #   queryset = queryset.order_by('-create_time').values('goods').distinct()
-  #   for i in queryset:
-  #     print(i)
-    
-  #   inventorys = queryset.values('shop', 'shop__name').annotate(total_stock = Sum('stock'))
-  #   serializer = common_serializers.ShopInventoryStatSerializer(inventorys, many=True)
-  #   return Response(serializer.data)
+    inventorys = queryset.values('shop', 'shop__name').annotate(total_stock = Sum('stock'), total_amount=Sum('amount'))
+    serializer = common_serializers.ShopInventoryStatSerializer(inventorys, many=True)
+    return Response(serializer.data)
 
     
     
