@@ -135,6 +135,56 @@ class ShopIncomeSerializer(serializers.ModelSerializer):
       'update_time',
     )
 
+class ShopInventorySerializer(serializers.ModelSerializer):
+  shop_name = serializers.CharField(
+    source='shop.name',
+    read_only=True
+  )
+  goods_name = serializers.CharField(
+    source='goods.name',
+    read_only=True
+  )
+  operator_name = serializers.CharField(
+    source='operator.name',
+    read_only=True
+  )
+  class Meta:
+    model = models.ShopInventory
+    fields = (
+      'id',
+      'shop',
+      'shop_name',
+      'goods',
+      'goods_name',
+      'price',
+      'stock',
+      'amount',
+      'operator',
+      'operator_name',
+      'create_time',
+      'update_time',
+    )
+
+class ShopInventoryStatSerializer(serializers.Serializer):
+  shop = serializers.CharField(
+    help_text=u'店面',
+    read_only=True
+  )
+  shop__name = serializers.CharField(
+    help_text=u'店面名称',
+    read_only=True
+  )
+  total_stock = serializers.IntegerField(
+    read_only=True,
+    help_text=u'总库存',
+  )
+  total_amount = serializers.DecimalField(
+    max_digits=10,
+    decimal_places=2,
+    default=0,
+    help_text=u'总成本',
+  )
+
 class GoodsSerializer(serializers.ModelSerializer):
   last_operator_name = serializers.CharField(
     source='last_operator.name',

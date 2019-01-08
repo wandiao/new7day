@@ -40,6 +40,7 @@ class ShopViewSet(viewsets.ModelViewSet):
   serializer_class = common_serializers.ShopSerializer
   search_fields = ('name',)
   filter_class = filters.ShopFilterSet
+  ordering = ('-create_time',)
 
 class ShopIncomeViewSet(viewsets.ModelViewSet):
   """
@@ -69,6 +70,7 @@ class ShopIncomeViewSet(viewsets.ModelViewSet):
   
   queryset = models.ShopIncome.objects.all()
   serializer_class = common_serializers.ShopIncomeSerializer
+  ordering = ('-create_time',)
 
   def create(self, request):
     operator = self.request.user.profile
@@ -108,6 +110,84 @@ class ShopIncomeViewSet(viewsets.ModelViewSet):
     incomes = queryset.values('shop').annotate(income = Sum('income'))
     serializer = self.get_serializer(incomes, many=True)
     return Response(serializer.data)
+
+class ShopInventoryViewSet(viewsets.ModelViewSet):
+  """
+  店面盘点接口
+
+  retrieve:
+  店面盘点详情
+
+  list:
+  店面盘点列表
+
+  create:
+  新增店面盘点
+
+  partial_update:
+  修改店面盘点
+
+  update:
+  修改店面盘点
+
+  delete:
+  删除店面盘点
+
+  stats:
+  店面盘点统计
+  """
+  
+  queryset = models.ShopInventory.objects.all()
+  serializer_class = common_serializers.ShopInventorySerializer
+  ordering = ('-create_time',)
+
+  def create(self, request):
+    operator = self.request.user.profile
+    request.data['operator'] = operator.id
+    instance = self.queryset.filter(shop=request.data['shop'], goods=request.data['goods']).first()
+    # if instance:
+    #   serializer = self.get_serializer(instance, data=request.data, partial=True)
+    #   serializer.is_valid(raise_exception=True)
+    #   serializer.save()
+    # else:
+    serializer = self.get_serializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    instance = self.perform_create(serializer)
+    return Response(serializer.data)
+
+  # @swagger_auto_schema(method='get', manual_parameters=[
+  #   openapi.Parameter('start_time', openapi.IN_QUERY, description="开始时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
+  #   openapi.Parameter('end_time', openapi.IN_QUERY, description="结束时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
+  #   openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
+  # ])
+  # @list_route(methods=['get'])
+  # def stats(self, request, *args, **kwargs):
+  #   queryset = models.ShopInventory.objects.all()
+  #   start_time = self.request.GET.get('start_time', None)
+  #   end_time = self.request.GET.get('end_time', None)
+  #   shop = self.request.GET.get('shop', '')
+  #   end_time = datetime.datetime.strptime(
+  #               end_time, '%Y-%m-%d') if end_time else datetime.datetime.now()
+  #   if start_time:
+  #     start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d')
+  #     queryset = queryset.filter(
+  #       create_time__gte=start_time,
+  #       create_time__lte=end_time,
+  #     )
+  #   else:
+  #     queryset = queryset.filter(
+  #       create_time__lte=end_time,
+  #     )
+    
+  #   if shop:
+  #     queryset = queryset.filter(shop=shop)
+  #   queryset = queryset.order_by('-create_time').values('goods').distinct()
+  #   for i in queryset:
+  #     print(i)
+    
+  #   inventorys = queryset.values('shop', 'shop__name').annotate(total_stock = Sum('stock'))
+  #   serializer = common_serializers.ShopInventoryStatSerializer(inventorys, many=True)
+  #   return Response(serializer.data)
 
     
     

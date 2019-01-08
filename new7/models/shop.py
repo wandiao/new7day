@@ -95,4 +95,60 @@ class ShopIncome(BaseModel):
         verbose_name = u'店面收入'
         verbose_name_plural = verbose_name
 
+class ShopInventory(BaseModel):
+    '''
+    店面盘点
+    '''
+    shop = models.ForeignKey(
+        'new7.Shop',
+        verbose_name=u'店面',
+        on_delete=models.CASCADE,
+        null=False,
+        help_text=u'店面',
+    )
+
+    goods = models.ForeignKey(
+        'new7.Goods',
+        verbose_name=u'商品',
+        on_delete=models.CASCADE,
+        null=False,
+        help_text=u'商品',
+    )
+
+    stock = models.IntegerField(
+      u'库存',
+      default=0,
+      help_text=u'库存'
+    )
+
+    price = models.DecimalField(
+        u'商品价格',
+        default=0,
+        max_digits=10,
+        decimal_places=2,
+        help_text=u'商品价格',
+    )
+
+    operator = models.ForeignKey(
+        'new7.Profile',
+        verbose_name=u'操作人员',
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        help_text=u'操作人员',
+    )
+
+    @property
+    def amount(self):
+        return self.price * self.stock
+
+
+
+    def __str__(self):
+        return self.create_time.strftime("%Y-%m-%d %H:%M:%S")
+    
+    class Meta:
+        verbose_name = u'店面盘点'
+        verbose_name_plural = verbose_name
+
 
