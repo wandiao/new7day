@@ -85,7 +85,7 @@ class OrderViewSet(viewsets.ModelViewSet):
               leave_count__gt=0,
               record_depot=order_goods.from_depot,
             ).order_by('-record_time').first()
-            leave_count = current.count - order_goods.count
+            leave_count = current.leave_count - order_goods.count
             if leave_count >= 0:
               current.leave_count = leave_count
               current.save()
