@@ -74,9 +74,12 @@ class OrderViewSet(viewsets.ModelViewSet):
             'error': '该数据无法删除',
           }) 
         goods_instance = models.Goods.objects.get(pk=order_goods.goods.id)
+        print(order_goods.from_depot)
         if instance.order_type == 'depot_in' and order_goods.from_depot == None:
+          print('进货')
           goods_instance.stock = goods_instance.stock - order_goods.count
         elif order_goods.from_depot != None:
+          print('仓库转移')
           tmp_count = order_goods.count
           while tmp_count > 0:
             current = models.GoodsRecord.objects.filter(
@@ -95,6 +98,7 @@ class OrderViewSet(viewsets.ModelViewSet):
               current.save()
               tmp_count = tmp_count - current.leave_count
         elif instance.order_type == 'depot_out':
+          print('出货')
           tmp_count = order_goods.count
           while tmp_count > 0:
             current = models.GoodsRecord.objects.filter(
@@ -113,6 +117,8 @@ class OrderViewSet(viewsets.ModelViewSet):
               current.save()
               tmp_count = tmp_count - current.leave_count
           goods_instance.stock = goods_instance.stock + order_goods.count
+        if goods_instance.stock < 0:
+          goods_instance.stock = 0
         goods_instance.save()
       self.perform_destroy(instance)
       return Response(u'删除成功', status.HTTP_201_CREATED)
@@ -139,7 +145,6 @@ class OrderViewSet(viewsets.ModelViewSet):
     order_data = serializer.save()
     total_count = 0
     for goods in goods_info:
-      print(goods.get('shop', None), '2333')
       instance = models.Goods.objects.get(pk=goods['goods_id'])
       data = dict(
         goods=goods['goods_id'],

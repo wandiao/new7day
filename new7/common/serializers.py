@@ -551,7 +551,11 @@ class OrderGoodsSerializer(serializers.ModelSerializer):
       'price',
       'unit',
       'operate_depot',
+      'from_depot',
       'shop',
+      'supplier',
+      'production_date',
+      'expiration_date',
     )
 
 class OrderGoodsDetailSerializer(serializers.ModelSerializer):
