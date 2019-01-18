@@ -5,7 +5,7 @@ import datetime
 import xlrd
 from django.db.transaction import atomic
 from rest_framework import viewsets
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Q
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 
@@ -113,12 +113,14 @@ class GoodsViewSet(viewsets.ModelViewSet):
     openapi.Parameter('end_time', openapi.IN_QUERY, description="结束时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
     openapi.Parameter('depot', openapi.IN_QUERY, description="库房", type=openapi.TYPE_STRING),
     openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
+    openapi.Parameter('search', openapi.IN_QUERY, description="搜索字段", type=openapi.TYPE_STRING),
   ])
   @list_route(methods=['get'])
   def cost(self, request, *args, **kwargs):
     queryset = models.GoodsRecord.objects.filter(from_depot__isnull=True)
     start_time = self.request.GET.get('start_time', None)
     end_time = self.request.GET.get('end_time', None)
+    search = self.request.GET.get('search', None)
     damaged_queryset = models.GoodsDamaged.objects.all()
     depot = self.request.GET.get('depot', '')
     shop = self.request.GET.get('shop', '')
@@ -147,6 +149,8 @@ class GoodsViewSet(viewsets.ModelViewSet):
       queryset = queryset.filter(record_depot=depot)
     if shop:
       queryset = queryset.filter(shop=shop)
+    if search:
+      queryset = queryset.filter(Q(goods__name__icontains=search)|Q(goods__short_name__icontains=search))
     records = queryset.filter(record_type='depot_in').values('goods', 'goods__name', 'unit', 'spec').annotate(count = Sum('count'), cost=Sum('amount'))
     for record in records:
       out_record = queryset.filter(record_type='depot_out', goods=record['goods']).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
