@@ -91,9 +91,9 @@ class OrderViewSet(viewsets.ModelViewSet):
               current.save()
               tmp_count = 0
             else:
+              tmp_count = tmp_count - current.leave_count
               current.leave_count = 0
               current.save()
-              tmp_count = tmp_count - current.leave_count
         elif instance.order_type == 'depot_out':
           tmp_count = order_goods.count
           while tmp_count > 0:
@@ -109,9 +109,9 @@ class OrderViewSet(viewsets.ModelViewSet):
               current.save()
               tmp_count = 0
             else:
+              tmp_count = tmp_count - current.leave_count
               current.leave_count = 0
               current.save()
-              tmp_count = tmp_count - current.leave_count
           goods_instance.stock = goods_instance.stock + order_goods.count
         if goods_instance.stock < 0:
           goods_instance.stock = 0
