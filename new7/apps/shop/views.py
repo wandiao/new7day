@@ -61,9 +61,9 @@ class ShopViewSet(viewsets.ModelViewSet):
       queryset = queryset.filter(shop=shop)
     queryset = queryset.values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
     for record in queryset:
-      inventory = models.ShopInventory.objects.filter(create_time__month=month, goods=record['goods'])
+      inventory = models.ShopInventory.objects.filter(create_time__month=month, goods=record['goods']).first()
       if inventory:
-        record['count'].count = record['count'] - inventory.stock
+        record['count'] = record['count'] - inventory.stock
         record['amount'] = record['amount'] - inventory.amount
     response = HttpResponse(content_type='application/ms-excel')
     filename = datetime.datetime.now().strftime('%Y%m%d%H%M') + '.xls'
