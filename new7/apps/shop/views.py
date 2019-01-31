@@ -39,6 +39,9 @@ class ShopViewSet(viewsets.ModelViewSet):
 
   delete:
   删除店面
+
+  month_use_export:
+  店面使用统计
   """
   queryset = models.Shop.objects.all()
   serializer_class = common_serializers.ShopSerializer
@@ -56,7 +59,7 @@ class ShopViewSet(viewsets.ModelViewSet):
     year = datetime.datetime.now().year
     print(year)
     month = datetime.datetime.now().month
-    queryset = models.GoodsRecord.objects.exclude(shop__isnull=True).filter(record_type='depot_out', record_time__month=month)[:10]
+    queryset = models.GoodsRecord.objects.exclude(shop__isnull=True).filter(record_type='depot_out', record_time__month=month)
     if shop:
       queryset = queryset.filter(shop=shop)
     queryset = queryset.values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
