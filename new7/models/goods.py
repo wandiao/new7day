@@ -314,12 +314,9 @@ class GoodsRecord(BaseModel):
         help_text=u'备注',
     )
 
-    amount = models.DecimalField(
-      u'成本',
-      default=0,
-      max_digits=10,
-      decimal_places=2,
-      help_text=u'成本'
+    amount = models.FloatField(
+        u'成本',
+        help_text=u'成本',
     )
 
     spec = models.CharField(

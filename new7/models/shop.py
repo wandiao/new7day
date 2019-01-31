@@ -131,11 +131,8 @@ class ShopInventory(BaseModel):
         help_text=u'商品价格',
     )
 
-    amount = models.DecimalField(
+    amount = models.FloatField(
         u'商品成本',
-        default=0,
-        max_digits=10,
-        decimal_places=2,
         help_text=u'商品成本',
     )
 

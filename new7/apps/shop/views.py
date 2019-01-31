@@ -62,7 +62,7 @@ class ShopViewSet(viewsets.ModelViewSet):
     queryset = models.GoodsRecord.objects.exclude(shop__isnull=True).filter(record_type='depot_out', record_time__month=month)
     if shop:
       queryset = queryset.filter(shop=shop)
-    queryset = queryset.values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
+    queryset = queryset.order_by('shop').values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
     for record in queryset:
       inventory = models.ShopInventory.objects.filter(create_time__month=month, goods=record['goods']).first()
       if inventory:
