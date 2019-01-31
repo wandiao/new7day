@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 import datetime
+import xlwt
 from rest_framework import viewsets
 from new7 import models
 from new7.common import serializers as common_serializers
@@ -9,10 +10,13 @@ from django.db.models import Sum
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
+from new7.common.utils import attachment_response
+from django.http import HttpResponse
 
 from rest_framework.decorators import list_route, detail_route, schema
 
 from . import filters
+from . import resources
 
 class ShopViewSet(viewsets.ModelViewSet):
   """
@@ -39,8 +43,54 @@ class ShopViewSet(viewsets.ModelViewSet):
   queryset = models.Shop.objects.all()
   serializer_class = common_serializers.ShopSerializer
   search_fields = ('name',)
+  resource_class = resources.ShopCostResource
   filter_class = filters.ShopFilterSet
   ordering = ('-create_time',)
+
+  @swagger_auto_schema(method='get', manual_parameters=[
+    openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
+  ])
+  @list_route(methods=['get'])
+  def month_use_export(self, request, *args, **kwargs):
+    shop = self.request.GET.get('shop', None)
+    year = datetime.datetime.now().year
+    print(year)
+    month = datetime.datetime.now().month
+    queryset = models.GoodsRecord.objects.exclude(shop__isnull=True).filter(record_type='depot_out', record_time__month=month)[:10]
+    if shop:
+      queryset = queryset.filter(shop=shop)
+    queryset = queryset.values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
+    for record in queryset:
+      inventory = models.ShopInventory.objects.filter(create_time__month=month, goods=record['goods'])
+      if inventory:
+        record['count'].count = record['count'] - inventory.stock
+        record['amount'] = record['amount'] - inventory.amount
+    response = HttpResponse(content_type='application/ms-excel')
+    filename = datetime.datetime.now().strftime('%Y%m%d%H%M') + '.xls'
+    response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('sheet1')
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = [u'店面名称', u'商品名称', u'商品数量', u'商品成本']
+    values = [u'shop__name', u'goods__name', u'count', u'amount']
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+    for row in queryset:
+        row_num += 1
+        for col_num in range(len(values)):
+            ws.write(row_num, col_num, row[values[col_num]], font_style)
+
+    wb.save(response)
+    return response
+    
+
+    
 
 class ShopIncomeViewSet(viewsets.ModelViewSet):
   """
