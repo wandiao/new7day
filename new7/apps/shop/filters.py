@@ -11,3 +11,11 @@ class ShopFilterSet(django_filters.FilterSet):
         fields = (
             'type',
         )
+
+class ShopInventoryFilterSet(django_filters.FilterSet):
+    class Meta:
+        model = models.ShopInventory
+        fields = (
+            'month',
+            'shop',
+        )

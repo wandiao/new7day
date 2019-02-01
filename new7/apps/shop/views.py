@@ -198,6 +198,8 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
   
   queryset = models.ShopInventory.objects.all()
   serializer_class = common_serializers.ShopInventorySerializer
+  filter_class = filters.ShopInventoryFilterSet
+  search_fields = ('goods__name','goods__short_name')
   ordering = ('-create_time',)
 
   def get_serializer_class(self):
