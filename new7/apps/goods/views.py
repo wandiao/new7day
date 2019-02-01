@@ -112,7 +112,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
   
   @list_route(methods=['get'])
   def export(self, request, *args, **kwargs):
-    queryset = self.queryset.values('name', 'short_name', 'code', 'in_price', 'sale_price', 'spec', 'unit', 'warn_stock', 'desc')
+    queryset = self.filter_queryset(self.get_queryset()).values('name', 'short_name', 'code', 'in_price', 'sale_price', 'spec', 'unit', 'warn_stock', 'desc')
     response = HttpResponse(content_type='application/ms-excel')
     filename = datetime.datetime.now().strftime('%Y%m%d%H%M') + '.xls'
     response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
