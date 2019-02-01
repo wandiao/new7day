@@ -3,11 +3,13 @@ from __future__ import unicode_literals
 
 import datetime
 import xlrd
+import xlwt
 from django.db.transaction import atomic
 from rest_framework import viewsets
 from django.db.models import Sum, F, Q
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from django.http import HttpResponse
 
 from collections import OrderedDict
 
@@ -107,6 +109,33 @@ class GoodsViewSet(viewsets.ModelViewSet):
       goods.current_depot_stock = current_count
     serializer = self.get_serializer(goods_list, many=True)
     return paginator.get_paginated_response(serializer.data)
+  
+  @list_route(methods=['get'])
+  def export(self, request, *args, **kwargs):
+    queryset = self.queryset.values('name', 'short_name', 'code', 'in_price', 'sale_price', 'spec', 'unit', 'warn_stock', 'desc')
+    response = HttpResponse(content_type='application/ms-excel')
+    filename = datetime.datetime.now().strftime('%Y%m%d%H%M') + '.xls'
+    response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('sheet1')
+    row_num = 0
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+    columns = [u'商品名称', u'商品简称', u'商品编码', u'商品进价', u'商品售价', u'规格', u'单位', u'预警库存', u'描述']
+    values = ['name', 'short_name', 'code', 'in_price', 'sale_price', 'spec', 'unit', 'warn_stock', 'desc']
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+    for row in queryset:
+        row_num += 1
+        for col_num in range(len(values)):
+            ws.write(row_num, col_num, row[values[col_num]], font_style)
+
+    wb.save(response)
+    return response
 
   @swagger_auto_schema(method='get', manual_parameters=[
     openapi.Parameter('start_time', openapi.IN_QUERY, description="开始时间(xxxx-xx-xx)", type=openapi.TYPE_STRING),
