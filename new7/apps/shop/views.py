@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 import datetime
 import xlwt
+import xlrd
 from rest_framework import viewsets
 from new7 import models
 from new7.common import serializers as common_serializers
@@ -245,6 +246,7 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
     sheet=reader.sheet_by_index(0)
     nrows = sheet.nrows
     for i in range(1, nrows):
+      row = sheet.row_values(i)
       shop = models.Shop.objects.get(name=row[0])
       if shop == None:
         raise rest_serializers.ValidationError({
@@ -256,7 +258,6 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
         raise rest_serializers.ValidationError({
           'error': u'商品%s不存在' % row[1],
         })
-      row = sheet.row_values(i)
       data = dict(
         shop=shop.name,
         goods=goods.name,
