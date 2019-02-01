@@ -12,6 +12,7 @@ from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
 from new7.common.utils import attachment_response
 from django.http import HttpResponse
+from django.db.transaction import atomic
 
 from rest_framework.decorators import list_route, detail_route, schema
 
@@ -190,11 +191,19 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
 
   stats:
   店面盘点统计
+
+  file_import:
+  盘点导入
   """
   
   queryset = models.ShopInventory.objects.all()
   serializer_class = common_serializers.ShopInventorySerializer
   ordering = ('-create_time',)
+
+  def get_serializer_class(self):
+    if self.action == 'file_import':
+      return common_serializers.FileImportExportSerializer
+    return common_serializers.ShopInventorySerializer
 
   def create(self, request):
     operator = self.request.user.profile
@@ -223,6 +232,40 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
     inventorys = queryset.values('shop', 'shop__name').annotate(total_stock = Sum('stock'), total_amount=Sum('amount'))
     serializer = common_serializers.ShopInventoryStatSerializer(inventorys, many=True)
     return Response(serializer.data)
+
+  @list_route(methods=['post'])  # noqa
+  @atomic
+  def file_import(self, request, *args, **kwargs):
+    serializer = self.get_serializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    file = serializer.validated_data['file']
+    reader = xlrd.open_workbook(file_contents=file.read(), encoding_override = 'utf8')
+    sheet=reader.sheet_by_index(0)
+    nrows = sheet.nrows
+    for i in range(1, nrows):
+      shop = models.Shop.objects.get(name=row[0])
+      if shop == None:
+        raise rest_serializers.ValidationError({
+          'error': u'店面%s不存在' % row[0],
+        })
+      
+      goods = models.Goods.objects.get(name=row[1])
+      if goods == None:
+        raise rest_serializers.ValidationError({
+          'error': u'商品%s不存在' % row[1],
+        })
+      row = sheet.row_values(i)
+      data = dict(
+        shop=shop.name,
+        goods=goods.name,
+        stock=row[2],
+        month=row[3],
+        price=goods.last_price
+      )
+      good_serializer = common_serializers.ShopInventorySerializer(data=data)
+      good_serializer.is_valid(raise_exception=True)
+      good_serializer.save()
+    return Response(u'导入成功', status.HTTP_201_CREATED)
 
     
     
