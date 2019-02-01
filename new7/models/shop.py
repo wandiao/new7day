@@ -138,6 +138,7 @@ class ShopInventory(BaseModel):
 
     amount = models.FloatField(
         u'商品成本',
+        default=0,
         help_text=u'商品成本',
     )
 
