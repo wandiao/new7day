@@ -343,6 +343,9 @@ class GoodsRecord(BaseModel):
         verbose_name_plural = verbose_name
 
 class GoodsDamaged(BaseModel):
+    '''
+    商品报损
+    '''
     goods =  models.ForeignKey(
         'new7.Goods',
         verbose_name=u'商品',
@@ -411,6 +414,13 @@ class GoodsDamaged(BaseModel):
         blank=True,
         help_text=u'操作人员',
     )
+
+    def __str__(self):
+        return self.goods.name
+    
+    class Meta:
+        verbose_name = u'商品报损'
+        verbose_name_plural = verbose_name
 
 
 
