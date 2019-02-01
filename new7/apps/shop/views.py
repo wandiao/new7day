@@ -52,19 +52,21 @@ class ShopViewSet(viewsets.ModelViewSet):
 
   @swagger_auto_schema(method='get', manual_parameters=[
     openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
+    openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
   ])
   @list_route(methods=['get'])
   def month_use_export(self, request, *args, **kwargs):
     shop = self.request.GET.get('shop', None)
+    month = self.request.GET.get('month', None)
     year = datetime.datetime.now().year
-    print(year)
-    month = datetime.datetime.now().month
+    if month == None:
+      month = datetime.datetime.now().month
     queryset = models.GoodsRecord.objects.exclude(shop__isnull=True).filter(record_type='depot_out', record_time__month=month)
     if shop:
       queryset = queryset.filter(shop=shop)
     queryset = queryset.order_by('shop').values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
     for record in queryset:
-      inventory = models.ShopInventory.objects.filter(create_time__month=month, goods=record['goods']).first()
+      inventory = models.ShopInventory.objects.filter(month=month, goods=record['goods']).first()
       if inventory:
         record['count'] = record['count'] - inventory.stock
         record['amount'] = record['amount'] - inventory.amount

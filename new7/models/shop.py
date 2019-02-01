@@ -123,6 +123,11 @@ class ShopInventory(BaseModel):
       help_text=u'库存'
     )
 
+    month = models.IntegerField(
+        default=0,
+        help_text=u'月份',
+    )
+
     price = models.DecimalField(
         u'商品价格',
         default=0,
