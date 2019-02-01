@@ -160,6 +160,7 @@ class ShopInventorySerializer(serializers.ModelSerializer):
       'stock',
       'amount',
       'operator',
+      'month',
       'operator_name',
       'create_time',
       'update_time',

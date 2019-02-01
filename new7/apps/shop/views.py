@@ -52,7 +52,7 @@ class ShopViewSet(viewsets.ModelViewSet):
 
   @swagger_auto_schema(method='get', manual_parameters=[
     openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
-    openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
+    openapi.Parameter('month', openapi.IN_QUERY, description="月份", type=openapi.TYPE_STRING),
   ])
   @list_route(methods=['get'])
   def month_use_export(self, request, *args, **kwargs):
