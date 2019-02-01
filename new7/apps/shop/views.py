@@ -68,7 +68,7 @@ class ShopViewSet(viewsets.ModelViewSet):
       queryset = queryset.filter(shop=shop)
     queryset = queryset.order_by('shop').values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
     for record in queryset:
-      inventory = models.ShopInventory.objects.filter(month=month, goods=record['goods']).first()
+      inventory = models.ShopInventory.objects.filter(month=month, goods=record['goods'], shop=record['shop']).first()
       if inventory:
         record['count'] = record['count'] - inventory.stock
         record['amount'] = record['amount'] - inventory.amount
