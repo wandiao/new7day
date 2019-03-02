@@ -259,8 +259,8 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
           'error': u'商品%s不存在' % row[1],
         })
       data = dict(
-        shop=shop.name,
-        goods=goods.name,
+        shop=shop.id,
+        goods=goods.id,
         stock=row[2],
         month=row[3],
         price=goods.last_price
