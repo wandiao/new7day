@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import datetime
 import xlwt
 import xlrd
-from rest_framework import viewsets
 from new7 import models
 from new7.common import serializers as common_serializers
 from django.db.models import Sum
@@ -14,6 +13,10 @@ from rest_framework.response import Response
 from new7.common.utils import attachment_response
 from django.http import HttpResponse
 from django.db.transaction import atomic
+from rest_framework import (
+    viewsets,
+    status,
+)
 
 from rest_framework.decorators import list_route, detail_route, schema
 
