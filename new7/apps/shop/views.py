@@ -242,6 +242,7 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
   @list_route(methods=['post'])  # noqa
   @atomic
   def file_import(self, request, *args, **kwargs):
+    operator = self.request.user.profile
     serializer = self.get_serializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     file = serializer.validated_data['file']
@@ -266,7 +267,8 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
         goods=goods.id,
         stock=row[2],
         month=row[3],
-        price=goods.last_price
+        price=goods.last_price,
+        operator=operator.id,
       )
       good_serializer = common_serializers.ShopInventorySerializer(data=data)
       good_serializer.is_valid(raise_exception=True)
