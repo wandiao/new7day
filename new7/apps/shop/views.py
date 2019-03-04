@@ -214,7 +214,7 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
   def create(self, request):
     operator = self.request.user.profile
     request.data['operator'] = operator.id
-    instance = self.queryset.filter(shop=request.data['shop'], goods=request.data['goods']).first()
+    instance = self.queryset.filter(shop=request.data['shop'], goods=request.data['goods'], month=request.data['month']).first()
     if instance:
       serializer = self.get_serializer(instance, data=request.data, partial=True)
       serializer.is_valid(raise_exception=True)
