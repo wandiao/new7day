@@ -70,11 +70,15 @@ class ShopViewSet(viewsets.ModelViewSet):
     if shop:
       queryset = queryset.filter(shop=shop)
     queryset = queryset.order_by('shop').values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
+    last_month = 1 if int(month) == 1 else int(month) - 1
     for record in queryset:
       inventory = models.ShopInventory.objects.filter(month=month, goods=record['goods'], shop=record['shop']).first()
+      last_inventory = models.ShopInventory.objects.filter(month=last_month, goods=record['goods'], shop=record['shop']).first()
+      if not last_inventory:
+        last_inventory = {}
       if inventory:
-        record['count'] = record['count'] - inventory.stock
-        record['amount'] = record['amount'] - inventory.amount
+        record['count'] = record['count'] - inventory.stock + (last_inventory.stock or 0)
+        record['amount'] = record['amount'] - inventory.amount + (last_inventory.amount or 0)
     response = HttpResponse(content_type='application/ms-excel')
     filename = datetime.datetime.now().strftime('%Y%m%d%H%M') + '.xls'
     response['Content-Disposition'] = 'attachment; filename={}'.format(filename)
