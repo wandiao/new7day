@@ -75,7 +75,11 @@ class ShopViewSet(viewsets.ModelViewSet):
       inventory = models.ShopInventory.objects.filter(month=month, goods=record['goods'], shop=record['shop']).first()
       last_inventory = models.ShopInventory.objects.filter(month=last_month, goods=record['goods'], shop=record['shop']).first()
       if not last_inventory:
-        last_inventory = {}
+        class tmp:
+          pass
+        last_inventory = tmp()
+        last_inventory.stock = 0
+        last_inventory.amount = 0
       if inventory:
         record['count'] = record['count'] - inventory.stock + (last_inventory.stock or 0)
         record['amount'] = record['amount'] - inventory.amount + (last_inventory.amount or 0)
