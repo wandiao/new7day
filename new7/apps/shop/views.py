@@ -6,7 +6,7 @@ import xlwt
 import xlrd
 from new7 import models
 from new7.common import serializers as common_serializers
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.response import Response
@@ -58,17 +58,21 @@ class ShopViewSet(viewsets.ModelViewSet):
   @swagger_auto_schema(method='get', manual_parameters=[
     openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
     openapi.Parameter('month', openapi.IN_QUERY, description="月份", type=openapi.TYPE_STRING),
+    openapi.Parameter('search', openapi.IN_QUERY, description="商品名、商品简称", type=openapi.TYPE_STRING),
   ])
   @list_route(methods=['get'])
   def month_use_export(self, request, *args, **kwargs):
     shop = self.request.GET.get('shop', None)
     month = self.request.GET.get('month', None)
+    search = self.request.GET.get('search', None)
     year = datetime.datetime.now().year
     if month == None:
       month = datetime.datetime.now().month
     queryset = models.GoodsRecord.objects.exclude(shop__isnull=True).filter(record_type='depot_out', record_time__month=month)
     if shop:
       queryset = queryset.filter(shop=shop)
+    if search:
+      queryset = queryset.filter(Q(goods__name__icontains=search)|Q(goods__short_name__icontains=search))
     queryset = queryset.order_by('shop').values('goods', 'goods__name', 'shop', 'shop__name').annotate(count = Sum('count'), amount=Sum('amount'))
     last_month = 1 if int(month) == 1 else int(month) - 1
     for record in queryset:
