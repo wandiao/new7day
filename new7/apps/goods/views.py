@@ -10,6 +10,7 @@ from django.db.models import Sum, F, Q
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
 from django.http import HttpResponse
+from decimal import * 
 
 from collections import OrderedDict
 
@@ -343,7 +344,9 @@ class GoodsDamagedViewSet(viewsets.ModelViewSet):
     data['operator'] = operator.id
     data['report_time'] = operate_time
     instance = models.Goods.objects.get(pk=data['goods'])
+    data['count'] = Decimal.from_float(data['count']).quantize(Decimal('0.00'))
     if 'damaged_depot' in data:
+      print(instance.stock, data['count'])
       if instance.stock - data['count'] < 0:
         raise rest_serializers.ValidationError({
           'error': '报损数量超过库存数',
