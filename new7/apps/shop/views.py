@@ -16,6 +16,7 @@ from django.db.transaction import atomic
 from rest_framework import (
     viewsets,
     status,
+    serializers as rest_serializers
 )
 
 from rest_framework.decorators import list_route, detail_route, schema
