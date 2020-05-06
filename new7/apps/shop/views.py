@@ -264,13 +264,13 @@ class ShopInventoryViewSet(viewsets.ModelViewSet):
     nrows = sheet.nrows
     for i in range(1, nrows):
       row = sheet.row_values(i)
-      shop = models.Shop.objects.get(name=row[0])
+      shop = models.Shop.objects.filter(name=row[0]).first()
       if shop == None:
         raise rest_serializers.ValidationError({
           'error': u'店面%s不存在' % row[0],
         })
       
-      goods = models.Goods.objects.get(name=row[1])
+      goods = models.Goods.objects.filter(name=row[1]).first()
       if goods == None:
         raise rest_serializers.ValidationError({
           'error': u'商品%s不存在' % row[1],
