@@ -202,12 +202,16 @@ class GoodsViewSet(viewsets.ModelViewSet):
     openapi.Parameter('depot', openapi.IN_QUERY, description="仓库", type=openapi.TYPE_STRING),
     openapi.Parameter('shop', openapi.IN_QUERY, description="店面", type=openapi.TYPE_STRING),
     openapi.Parameter('goods_id', openapi.IN_QUERY, description="商品id", type=openapi.TYPE_STRING),
+    openapi.Parameter('year', openapi.IN_QUERY, description="年份", type=openapi.TYPE_STRING),
   ])
   @list_route(methods=['get'])
   def stats(self, request, *args, **kwargs):
     depot = self.request.GET.get('depot', None)
     shop = self.request.GET.get('shop', None)
     goods_id = self.request.GET.get('goods_id', None)
+    year = self.request.GET.get('year', None)
+    if year == None:
+      year = datetime.datetime.now().year
     queryset = models.GoodsRecord.objects.all()
     damaged_queryset = models.GoodsDamaged.objects.all()
     if depot:
@@ -222,21 +226,26 @@ class GoodsViewSet(viewsets.ModelViewSet):
     for n in range (1, 13):
       current = queryset.filter(
         record_time__month=n,
+        record_time__year=year,
         record_type='depot_in',
       ).filter(from_depot__isnull=True).aggregate(count = Sum('count'), cost=Sum('amount'))
       move_current = queryset.filter(
         record_time__month=n,
+        record_time__year=year,
         record_type='depot_in',
       ).exclude(from_depot__isnull=True).aggregate(move_count = Sum('count'), move_cost=Sum('amount'))
       used_current = queryset.filter(
         record_time__month=n,
+        record_time__year=year,
         record_type='depot_out',
       ).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
       damaged_current = damaged_queryset.filter(
         report_time__month=n,
+        record_time__year=year,
       ).aggregate(damaged_count = Sum('count'), damaged_cost=Sum('amount'))
       month_data = dict(
         month=n,
+        record_time__year=year,
         count=current.get('count', 0),
         cost=current.get('cost', 0),
         used_count=used_current.get('used_count', 0),
