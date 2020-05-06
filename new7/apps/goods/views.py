@@ -241,7 +241,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
       ).aggregate(used_count = Sum('count'), used_cost=Sum('amount'))
       damaged_current = damaged_queryset.filter(
         report_time__month=n,
-        record_time__year=year,
+        create_time__year=year,
       ).aggregate(damaged_count = Sum('count'), damaged_cost=Sum('amount'))
       month_data = dict(
         month=n,
