@@ -107,7 +107,7 @@ class GoodsViewSet(viewsets.ModelViewSet):
       else:
         current_count = 0
       
-      goods.current_depot_stock = current_count
+      goods.current_depot_stock = min(current_count, goods.stock)
     serializer = self.get_serializer(goods_list, many=True)
     return paginator.get_paginated_response(serializer.data)
   
