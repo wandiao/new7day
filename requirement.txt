@@ -29,7 +29,7 @@ invoke==1.1.1
 ipython-genutils==0.2.0
 itypes==1.1.0
 jdcal==1.4
-Jinja2==2.10
+Jinja2==2.11.3
 jsonpointer==1.14
 jsonschema==2.6.0
 MarkupSafe==1.0
